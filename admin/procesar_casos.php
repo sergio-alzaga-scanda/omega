@@ -8,6 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $desc_c = $conn->real_escape_string($_POST['descripcion_corta']);
     $desc_l = $conn->real_escape_string($_POST['descripcion_larga']);
     $n_cliente = $conn->real_escape_string($_POST['nombre_cliente']);
+    
+    // --- NUEVAS VARIABLES CAPTURADAS ---
+    $cargo = $conn->real_escape_string($_POST['cargo_cliente']);
+    $comentario = $conn->real_escape_string($_POST['comentario_cliente']);
+    // -----------------------------------
+
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
     // 1. Procesar Imagen Principal (Portada)
@@ -20,12 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($accion === 'editar') {
-        $sql = "UPDATE casos_exito SET titulo='$titulo', descripcion_corta='$desc_c', descripcion_larga='$desc_l', nombre_cliente='$n_cliente' $img_principal_sql WHERE id=$id";
+        // SQL ACTUALIZADO CON CARGO Y COMENTARIO
+        $sql = "UPDATE casos_exito SET 
+                titulo='$titulo', 
+                descripcion_corta='$desc_c', 
+                descripcion_larga='$desc_l', 
+                nombre_cliente='$n_cliente',
+                cargo_cliente='$cargo', 
+                comentario_cliente='$comentario' 
+                $img_principal_sql 
+                WHERE id=$id";
+        
         $conn->query($sql);
         $caso_id = $id;
     } else {
         $ruta_p = isset($ruta_p) ? $ruta_p : '';
-        $sql = "INSERT INTO casos_exito (titulo, descripcion_corta, descripcion_larga, imagen_url, nombre_cliente) VALUES ('$titulo', '$desc_c', '$desc_l', '$ruta_p', '$n_cliente')";
+        // SQL INSERT ACTUALIZADO CON CARGO Y COMENTARIO
+        $sql = "INSERT INTO casos_exito (titulo, descripcion_corta, descripcion_larga, imagen_url, nombre_cliente, cargo_cliente, comentario_cliente) 
+                VALUES ('$titulo', '$desc_c', '$desc_l', '$ruta_p', '$n_cliente', '$cargo', '$comentario')";
+        
         $conn->query($sql);
         $caso_id = $conn->insert_id;
     }

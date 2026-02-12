@@ -36,24 +36,28 @@ $puntos = $conn->query("SELECT * FROM porque_primicia_puntos ORDER BY orden ASC"
             <h2 class="fw-bold mb-4">Gestión de Sección: Nosotros</h2>
 
             <div class="card card-nosotros p-4">
-                <div class="section-header"><h5>Textos de Cabecera</h5></div>
-                <form action="procesar_nosotros.php" method="POST">
-                    <input type="hidden" name="accion" value="actualizar_textos">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold mb-2">Título de Sección</label>
-                            <input type="text" name="titulo" class="form-control form-control-lg" value="<?php echo htmlspecialchars($nosotros['titulo']['valor']); ?>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold mb-2">Subtítulo (Rojo)</label>
-                            <input type="text" name="subtitulo" class="form-control form-control-lg" value="<?php echo htmlspecialchars($nosotros['subtitulo']['valor']); ?>">
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-danger btn-lg w-100 btn-save-lg shadow">Guardar Cambios en Cabecera</button>
-                        </div>
-                    </div>
-                </form>
+    <div class="section-header"><h5>Textos de Cabecera</h5></div>
+    <form action="procesar_nosotros.php" method="POST">
+        <input type="hidden" name="accion" value="actualizar_textos">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="fw-bold mb-2">Título de Sección</label>
+                <input type="text" name="titulo" class="form-control form-control-lg" value="<?php echo htmlspecialchars($nosotros['titulo']['valor']); ?>">
             </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-2">Subtítulo (Rojo)</label>
+                <input type="text" name="subtitulo" class="form-control form-control-lg" value="<?php echo htmlspecialchars($nosotros['subtitulo']['valor']); ?>">
+            </div>
+            <div class="col-12">
+                <label class="fw-bold mb-2">Descripción General de la Sección</label>
+                <textarea name="descripcion" class="form-control" rows="4"><?php echo htmlspecialchars($nosotros['descripcion']['valor']); ?></textarea>
+            </div>
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-danger btn-lg w-100 btn-save-lg shadow">Guardar Cambios en Cabecera</button>
+            </div>
+        </div>
+    </form>
+</div>
 
             <div class="card card-nosotros p-4">
                 <div class="section-header d-flex justify-content-between align-items-center">

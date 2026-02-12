@@ -8,9 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($accion === 'actualizar_textos') {
         $tit = $conn->real_escape_string($_POST['titulo']);
         $sub = $conn->real_escape_string($_POST['subtitulo']);
+        // Capturamos la nueva descripción
+        $desc_general = $conn->real_escape_string($_POST['descripcion']); 
+
+        // Actualizamos los tres campos en la tabla configuracion
         $conn->query("UPDATE configuracion SET valor = '$tit' WHERE clave = 'titulo' AND seccion = 'nosotros'");
         $conn->query("UPDATE configuracion SET valor = '$sub' WHERE clave = 'subtitulo' AND seccion = 'nosotros'");
-    } 
+        $conn->query("UPDATE configuracion SET valor = '$desc_general' WHERE clave = 'descripcion' AND seccion = 'nosotros'");
+    }
 
     elseif ($accion === 'actualizar_contadores') {
         foreach ($_POST['numero'] as $id => $num) {
