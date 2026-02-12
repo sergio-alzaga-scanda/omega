@@ -1,23 +1,29 @@
 <?php
+// Configuración de base y obtención de datos
 $base_url = "/omega/"; 
 $servicios_res = getItems($conn, 'servicios');
 $servicios_array = [];
-if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_array[] = $row; } }
+if ($servicios_res) { 
+    while ($row = $servicios_res->fetch_assoc()) { 
+        $servicios_array[] = $row; 
+    } 
+}
 ?>
 
 <section class="servicios-section" id="servicios">
     <div class="container-services">
         <h2 class="section-title">Servicios</h2>
-        <div class="services-list">
+        
+        <div class="services-wrapper">
             <?php foreach ($servicios_array as $s): ?>
             <div class="service-item">
                 <div class="service-image">
-                    <img src="<?php echo $base_url . $s['imagen_url']; ?>" alt="<?php echo htmlspecialchars($s['titulo']); ?>">
+                    <img src="<?php echo $base_url . $s['imagen_url']; ?>" alt="<?php echo htmlspecialchars($s['titulo']); ?>" loading="lazy">
                 </div>
                 <div class="service-info">
+                    <span class="service-tags"><?php echo htmlspecialchars($s['subtitulos_rojos']); ?></span>
                     <h4><?php echo htmlspecialchars($s['titulo']); ?></h4>
                     <p class="text-truncate-3"><?php echo nl2br(htmlspecialchars($s['descripcion'])); ?></p>
-                    <span class="service-tags d-block mb-3"><?php echo htmlspecialchars($s['subtitulos_rojos']); ?></span>
                     <button class="btn-ver-mas" data-bs-toggle="modal" data-bs-target="#servicioModal<?php echo (int)$s['id']; ?>">
                         VER MÁS <i class="bi bi-plus-lg"></i>
                     </button>
@@ -26,6 +32,7 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
             <?php endforeach; ?>
         </div>
     </div>
+    
     <div class="shape-right"></div>
     <div class="shape-left-bottom"></div>
 </section>
@@ -41,7 +48,7 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
 
             <div class="modal-body p-0">
                 <div class="row g-0">
-                    <div class="col-12 col-md-7 bg-black contenedor-img-modal">
+                    <div class="col-12 col-lg-7 bg-black contenedor-img-modal">
                         <div id="carSer<?php echo $s['id']; ?>" class="carousel slide h-100" data-bs-ride="carousel">
                             <div class="carousel-inner h-100">
                                 <div class="carousel-item active h-100">
@@ -73,7 +80,7 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-5 p-4 p-md-5 bg-white col-info-scroll">
+                    <div class="col-12 col-lg-5 p-4 p-md-5 bg-white col-info-scroll">
                         <div class="info-modal-content">
                             <span class="text-danger fw-bold small text-uppercase mb-2 d-block">
                                 <?php echo htmlspecialchars($s['subtitulos_rojos']); ?>
@@ -92,38 +99,161 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </div> </div> </div> </div> </div>
 <?php endforeach; ?>
 
 <style>
-/* --- ESTILOS DEL MODAL PARA DESCRIPCIÓN LARGA --- */
+/* --- VARIABLES Y RESET --- */
+:root {
+    --primary-red: #d3122a;
+    --dark-bg: #0c0c0c;
+    --card-bg: #161616;
+}
 
+/* --- ESTILOS SECCIÓN FRONT --- */
+.servicios-section { 
+    background-color: var(--dark-bg); 
+    padding: 80px 0; 
+    position: relative; 
+    overflow: hidden; 
+    color: white; 
+}
+
+.container-services { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 20px; 
+    z-index: 5; 
+    position: relative;
+}
+
+.section-title { 
+    font-size: clamp(2.5rem, 6vw, 4rem); 
+    font-weight: 900; 
+    color: rgba(255,255,255,0.05); /* Efecto de texto de fondo o sutil */
+    text-align: center;
+    margin-bottom: 50px; 
+    text-transform: uppercase; 
+    -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+}
+
+.services-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 30px; 
+}
+
+/* Item de Servicio Responsivo */
+.service-item { 
+    display: flex; 
+    flex-direction: column; /* Móvil: vertical */
+    background: var(--card-bg);
+    border-radius: 15px; 
+    overflow: hidden; 
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.4s ease;
+}
+
+@media (min-width: 768px) {
+    .service-item { 
+        flex-direction: row; /* Tablet/Desktop: horizontal */
+        height: 320px;
+    }
+    .service-image { flex: 0 0 400px; }
+}
+
+.service-image { 
+    width: 100%; 
+    height: 250px; 
+}
+
+@media (min-width: 768px) { .service-image { height: auto; } }
+
+.service-image img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.6s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-red);
+}
+
+.service-item:hover .service-image img { 
+    transform: scale(1.1); 
+}
+
+.service-info { 
+    padding: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    flex-grow: 1;
+}
+
+.service-tags { 
+    color: var(--primary-red); 
+    font-weight: 700; 
+    font-size: 0.8rem; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.service-info h4 { 
+    font-size: 1.8rem; 
+    font-weight: 800; 
+    margin-bottom: 15px; 
+}
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+.btn-ver-mas { 
+    align-self: flex-start;
+    background: transparent; 
+    border: 2px solid var(--primary-red); 
+    color: var(--primary-red); 
+    padding: 10px 25px; 
+    font-weight: 700; 
+    border-radius: 5px; 
+    transition: 0.3s; 
+}
+
+.btn-ver-mas:hover { 
+    background: var(--primary-red); 
+    color: white; 
+}
+
+/* --- ESTILOS DEL MODAL --- */
 @media (min-width: 992px) {
-    /* Forzamos que el modal sea grande y no crezca hacia abajo */
     .modal-grande-personalizado {
         height: 80vh; 
         min-height: 600px;
     }
-
-    .contenedor-img-modal, 
-    .col-info-scroll {
+    .contenedor-img-modal, .col-info-scroll {
         height: 80vh;
         min-height: 600px;
     }
-
-    /* Scroll solo en la columna de texto */
     .col-info-scroll {
         overflow-y: auto;
-        display: flex;
-        flex-direction: column;
     }
 }
 
-/* Contenedor de imagen para que siempre rellene el espacio sin deformarse */
+/* Ajustes Modal Móvil */
+@media (max-width: 991px) {
+    .contenedor-img-modal { height: 350px; }
+    .col-info-scroll { padding: 30px 20px !important; }
+}
+
 .img-wrapper-fijo {
     width: 100%;
     height: 100%;
@@ -136,19 +266,7 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
 .img-wrapper-fijo img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Mantiene la imagen llenando el área fija */
-}
-
-/* Personalización del Scrollbar */
-.col-info-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-.col-info-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-.col-info-scroll::-webkit-scrollbar-thumb {
-    background: #d3122a; /* Rojo Primacía */
-    border-radius: 10px;
+    object-fit: cover;
 }
 
 /* Botón de cerrar flotante */
@@ -157,44 +275,34 @@ if ($servicios_res) { while ($row = $servicios_res->fetch_assoc()) { $servicios_
     top: 20px;
     right: 20px;
     z-index: 1070;
-    width: 40px;
-    height: 40px;
-    background-color: #d3122a;
+    width: 45px;
+    height: 45px;
+    background-color: var(--primary-red);
     color: white !important;
     border: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .btn-close-custom:hover {
     background-color: #000;
-    transform: scale(1.1);
+    transform: rotate(90deg);
 }
-</style>
 
-<style>
-/* Estilos del Front */
-.servicios-section { background-color: #0c0c0c; padding: 100px 0; position: relative; overflow: hidden; color: white; }
-.container-services { max-width: 1100px; margin: 0 auto; padding: 0 20px; z-index: 5; position: relative;}
-.section-title { font-size: 3rem; font-weight: 900; color: #333; margin-bottom: 60px; text-transform: uppercase; }
-.services-list { display: flex; flex-direction: column; gap: 50px; }
-.service-item { display: flex; align-items: center; gap: 40px; }
-.service-image { flex: 0 0 350px; height: 220px; border-radius: 8px; overflow: hidden; }
-.service-image img { width: 100%; height: 100%; object-fit: cover; }
-.btn-ver-mas { background: transparent; border: 1.5px solid #d3122a; color: #d3122a; padding: 10px 25px; font-weight: 700; border-radius: 5px; transition: 0.3s; }
-.btn-ver-mas:hover { background: #d3122a; color: white; }
+/* Scrollbar Personalizada */
+.col-info-scroll::-webkit-scrollbar { width: 6px; }
+.col-info-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+.col-info-scroll::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
 
-/* Estilos Modal Grande */
-@media (min-width: 992px) {
-    .modal-grande-personalizado, .contenedor-img-modal, .columna-info-modal { height: 75vh; min-height: 550px; }
-    .columna-info-modal { overflow-y: auto; }
+/* Formas decorativas (Shapes) */
+.shape-right {
+    position: absolute; top: 0; right: -100px; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(211,18,42,0.1) 0%, transparent 70%);
+    z-index: 1;
 }
-.img-wrapper-fijo { width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
-.img-wrapper-fijo img { width: 100%; height: 100%; object-fit: cover; }
-.btn-close-custom { position: absolute; top: 15px; right: 15px; z-index: 10; background: #d3122a; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; }
 </style>
