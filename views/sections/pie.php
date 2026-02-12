@@ -1,6 +1,10 @@
 <?php 
 // Recuperamos la configuración de contacto de la base de datos
 $c = getSeccion($conn, 'contacto'); 
+$hero = getHeroConfig($conn); 
+
+// Definimos la ruta del logo: si existe en BD lo usamos, si no, el de respaldo
+$ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.png';
 ?>
 
 <section class="contacto-section" id="contacto">
@@ -8,7 +12,7 @@ $c = getSeccion($conn, 'contacto');
 
     <div class="container-contacto">
         <div class="footer-info">
-            <img src="assets/logo-primacia.png" alt="PRIMACIA" class="footer-logo">
+            <img src="<?php echo $ruta_logo_pie; ?>" alt="PRIMACIA" class="footer-logo">
             
             <div class="direct-links">
                 <a href="mailto:<?php echo $c['email']; ?>" class="contact-link">

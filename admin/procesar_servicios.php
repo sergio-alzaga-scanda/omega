@@ -1,76 +1,82 @@
 <?php
 session_start();
 require_once '../config/db.php';
+if (!isset($_SESSION['admin_id'])) { exit("Acceso denegado"); }
 
-// --- BLOQUE DE ELIMINACIÓN (GET) ---
-if (isset($_GET['eliminar']) && is_numeric($_GET['eliminar'])) {
+$folder = "assets/servicios/";
+$upload_dir = "../" . $folder;
+
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+// --- ELIMINAR SERVICIO ---
+if (isset($_GET['eliminar'])) {
     $id = (int)$_GET['eliminar'];
-    
-    // 1. Obtener la ruta de la imagen antes de borrar el registro
     $res = $conn->query("SELECT imagen_url FROM servicios WHERE id = $id");
-    if($reg = $res->fetch_assoc()){
-        $ruta_fisica = "../" . $reg['imagen_url'];
-        // 2. Borrar archivo del servidor si existe y no es el default
-        if($reg['imagen_url'] != 'assets/servicios/default.jpg' && file_exists($ruta_fisica)) {
-            unlink($ruta_fisica);
+    $s = $res->fetch_assoc();
+    if ($s && !empty($s['imagen_url']) && file_exists("../" . $s['imagen_url'])) { 
+        unlink("../" . $s['imagen_url']); 
+    }
+    $gal = $conn->query("SELECT ruta_imagen FROM servicio_galeria WHERE servicio_id = $id");
+    while($img = $gal->fetch_assoc()){
+        if(!empty($img['ruta_imagen']) && file_exists("../".$img['ruta_imagen'])) {
+            unlink("../".$img['ruta_imagen']);
         }
     }
-    
-    // 3. Borrar de la base de datos
-    $sql_del = "DELETE FROM servicios WHERE id = $id";
-    if ($conn->query($sql_del)) {
-        header("Location: gestion_servicios.php?status=success");
-    } else {
-        header("Location: gestion_servicios.php?status=error");
-    }
+    $conn->query("DELETE FROM servicios WHERE id = $id");
+    header("Location: gestion_servicios.php?status=success");
     exit();
 }
 
-
+// --- GUARDAR O EDITAR ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = (int)$_POST['id'];
     $accion = $_POST['accion'];
     $titulo = $conn->real_escape_string($_POST['titulo']);
-    $desc = $conn->real_escape_string($_POST['descripcion']);
+    $descripcion = $conn->real_escape_string($_POST['descripcion']); // Corta
+    $descripcion_larga = $conn->real_escape_string($_POST['descripcion_larga']); // Nueva
     $tags = $conn->real_escape_string($_POST['subtitulos_rojos']);
-    
-    $img_sql = "";
 
-    // 1. Validar si se subió una imagen
-    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-        $directorio = "../assets/servicios/";
-        
-        // Crear carpeta si no existe
-        if (!is_dir($directorio)) {
-            mkdir($directorio, 0777, true);
+    if ($accion == 'nuevo') {
+        $img_path = "";
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
+            $ext = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+            $nombre_img = "serv_" . time() . "." . $ext;
+            $img_path = $folder . $nombre_img;
+            move_uploaded_file($_FILES['imagen']['tmp_name'], "../" . $img_path);
         }
+        $conn->query("INSERT INTO servicios (titulo, descripcion, descripcion_larga, subtitulos_rojos, imagen_url) 
+                      VALUES ('$titulo', '$descripcion', '$descripcion_larga', '$tags', '$img_path')");
+        $servicio_id = $conn->insert_id;
+    } else {
+        $servicio_id = $id;
+        $img_sql = "";
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
+            $ext = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+            $nombre_img = "serv_" . time() . "." . $ext;
+            $img_path = $folder . $nombre_img;
+            move_uploaded_file($_FILES['imagen']['tmp_name'], "../" . $img_path);
+            $img_sql = ", imagen_url='$img_path'";
+        }
+        $conn->query("UPDATE servicios SET titulo='$titulo', descripcion='$descripcion', 
+                      descripcion_larga='$descripcion_larga', subtitulos_rojos='$tags' $img_sql WHERE id=$id");
+    }
 
-        $extension = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
-        $nombre_archivo = "ser_" . time() . "." . $extension;
-        $ruta_final = $directorio . $nombre_archivo;
-
-        if (move_uploaded_file($_FILES['imagen']['tmp_name'], $ruta_final)) {
-            // Guardamos la ruta relativa para la base de datos
-            $path_db = "assets/servicios/" . $nombre_archivo;
-            $img_sql = ", imagen_url = '$path_db'";
+    // --- PROCESAR GALERÍA ---
+    if (isset($_FILES['galeria']) && !empty($_FILES['galeria']['name'][0])) {
+        foreach ($_FILES['galeria']['tmp_name'] as $key => $tmp_name) {
+            if ($_FILES['galeria']['error'][$key] == 0) {
+                $ext = pathinfo($_FILES['galeria']['name'][$key], PATHINFO_EXTENSION);
+                $nombre_gal = "gal_" . uniqid() . "." . $ext;
+                $ruta_gal = $folder . $nombre_gal;
+                if (move_uploaded_file($tmp_name, "../" . $ruta_gal)) {
+                    $conn->query("INSERT INTO servicio_galeria (servicio_id, ruta_imagen) VALUES ($servicio_id, '$ruta_gal')");
+                }
+            }
         }
     }
 
-    if ($accion === 'editar') {
-        $id = (int)$_POST['id'];
-        // Si no hay imagen nueva, $img_sql estará vacío y no sobreescribirá la actual
-        $sql = "UPDATE servicios SET titulo = '$titulo', descripcion = '$desc', subtitulos_rojos = '$tags' $img_sql WHERE id = $id";
-    } else {
-        // Para nuevos registros, si no subió foto, ponemos una por defecto
-        $final_path = !empty($img_sql) ? str_replace(", imagen_url = ", "", $img_sql) : "'assets/servicios/default.jpg'";
-        $sql = "INSERT INTO servicios (titulo, descripcion, imagen_url, subtitulos_rojos) 
-                VALUES ('$titulo', '$desc', $final_path, '$tags')";
-    }
-
-    if ($conn->query($sql)) {
-        header("Location: gestion_servicios.php?status=success");
-    } else {
-        // Depuración técnica en caso de error
-        echo "Error en SQL: " . $conn->error;
-    }
+    header("Location: gestion_servicios.php?status=success");
     exit();
 }

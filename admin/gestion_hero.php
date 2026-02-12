@@ -79,20 +79,21 @@ $h = $res->fetch_assoc();
                                 <input type="text" name="texto_boton" class="form-control" value="<?php echo htmlspecialchars($h['texto_boton']); ?>" required>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold">Color de Fondo</label>
-                                    <input type="color" name="color_fondo" class="form-control form-control-color w-100" value="<?php echo $h['color_fondo']; ?>" title="Elige el color de fondo">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold">Color del Botón (Primario)</label>
-                                    <input type="color" name="color_primario" class="form-control form-control-color w-100" value="<?php echo $h['color_primario']; ?>" title="Elige el color del botón">
-                                </div>
-                            </div>
+                            
+                                    <input type="color" hidden name="color_fondo" class="form-control form-control-color w-100" value="<?php echo $h['color_fondo']; ?>" title="Elige el color de fondo">
+                               
+                                    <input type="color" hidden name="color_primario" class="form-control form-control-color w-100" value="<?php echo $h['color_primario']; ?>" title="Elige el color del botón">
+                                
+                            
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Logo del Header</label>
                                 <input type="file" name="logo" class="form-control" accept="image/*">
+                                <div class="form-text">Formatos sugeridos: PNG transparente o SVG.</div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Logo del pie pagina</label>
+                                <input type="file" name="logo_pie" class="form-control" accept="image/*">
                                 <div class="form-text">Formatos sugeridos: PNG transparente o SVG.</div>
                             </div>
 

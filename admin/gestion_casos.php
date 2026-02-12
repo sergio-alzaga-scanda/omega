@@ -17,6 +17,16 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         .case-img-preview { width: 100px; height: 70px; object-fit: cover; border-radius: 8px; }
         .btn-save-lg { font-weight: 800; text-transform: uppercase; padding: 18px; font-size: 1.1rem; }
         .modal-header { background-color: #1a1a1a; color: white; border-bottom: 4px solid var(--brand-red); }
+        .gal-item { position: relative; width: 100px; height: 75px; }
+        .gal-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; }
+        .btn-del-photo { 
+            position: absolute; top: -5px; right: -5px; 
+            background: var(--brand-red); color: white; 
+            border: none; border-radius: 50%; 
+            width: 22px; height: 22px; font-size: 12px; 
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -97,17 +107,24 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">IMAGEN PORTADA(Recomendado 800x600px)</label>
+                            <label class="fw-bold small text-muted">IMAGEN PORTADA (Principal)</label>
                             <input type="file" name="imagen" class="form-control" onchange="previewImg(event)">
                             <div class="mt-3 text-center bg-light p-2 border rounded">
                                 <img id="img_preview" src="#" style="max-height: 180px; display: none; border-radius: 8px;">
                             </div>
                         </div>
+
                         <div class="mb-3">
-    <label class="fw-bold small text-danger">AÑADIR IMÁGENES A LA GALERÍA (Múltiples)</label>
-    <input type="file" name="galeria[]" class="form-control" multiple accept="image/*">
-    <small class="text-muted">Puedes seleccionar varias fotos a la vez.</small>
-</div>
+                            <label class="fw-bold small text-danger">AÑADIR MÁS FOTOS A LA GALERÍA</label>
+                            <input type="file" name="galeria[]" class="form-control" multiple accept="image/*">
+                        </div>
+
+                        <div id="galeria_actual_container" class="mb-3" style="display:none;">
+                            <label class="fw-bold small text-muted d-block mb-2">GALERÍA ACTUAL (Clic en X para borrar)</label>
+                            <div id="lista_galeria" class="d-flex flex-wrap gap-3 p-2 bg-light border rounded">
+                                </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="fw-bold small text-muted">CLIENTE</label>
@@ -139,44 +156,34 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
 <script>
-    function confirmarEliminar(id) {
-    Swal.fire({
-        title: '¿ELIMINAR ESTE PROYECTO?',
-        text: "Esta acción es irreversible y borrará toda la galería asociada.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d3122a', // Rojo Primacía
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'SÍ, ELIMINAR',
-        cancelButtonText: 'CANCELAR',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // REDIRECCIÓN DINÁMICA
-            window.location.href = `eliminar_caso.php?id=${id}`;
-        }
-    });
-}
     const modalMaster = new bootstrap.Modal(document.getElementById('modalCasosMaster'));
 
+    function confirmarEliminar(id) {
+        Swal.fire({
+            title: '¿ELIMINAR ESTE PROYECTO?',
+            text: "Esta acción es irreversible y borrará toda la galería asociada.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d3122a',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'SÍ, ELIMINAR',
+            cancelButtonText: 'CANCELAR',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `eliminar_caso.php?id=${id}`;
+            }
+        });
+    }
+
     function abrirModalNuevo() {
-        // Limpiar formulario
+        document.querySelector('form').reset();
         document.getElementById('form_accion').value = 'nuevo';
         document.getElementById('form_id').value = '';
         document.getElementById('modal_titulo_label').innerText = 'REGISTRAR NUEVO PROYECTO';
         document.getElementById('img_preview').style.display = 'none';
-        
-        // Limpiar inputs
-        document.getElementById('in_titulo').value = '';
-        document.getElementById('in_desc_c').value = '';
-        document.getElementById('in_desc_l').value = '';
-        document.getElementById('in_cliente').value = '';
-        document.getElementById('in_cargo').value = '';
-        document.getElementById('in_comentario').value = '';
-        
+        document.getElementById('galeria_actual_container').style.display = 'none';
         modalMaster.show();
     }
 
@@ -185,7 +192,6 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         document.getElementById('form_id').value = datos.id;
         document.getElementById('modal_titulo_label').innerText = 'EDITAR PROYECTO: ' + datos.titulo;
         
-        // Llenar datos
         document.getElementById('in_titulo').value = datos.titulo;
         document.getElementById('in_desc_c').value = datos.descripcion_corta;
         document.getElementById('in_desc_l').value = datos.descripcion_larga;
@@ -193,12 +199,72 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         document.getElementById('in_cargo').value = datos.cargo_cliente;
         document.getElementById('in_comentario').value = datos.comentario_cliente;
         
-        // Mostrar imagen actual
+        // Portada
         const preview = document.getElementById('img_preview');
-        preview.src = '../' + datos.imagen_url;
-        preview.style.display = 'inline-block';
+        if(datos.imagen_url) {
+            preview.src = '../' + datos.imagen_url;
+            preview.style.display = 'inline-block';
+        } else {
+            preview.style.display = 'none';
+        }
+
+        // Cargar Galería vía AJAX
+        const contenedorGaleria = document.getElementById('lista_galeria');
+        const seccionGaleria = document.getElementById('galeria_actual_container');
+        contenedorGaleria.innerHTML = '<div class="spinner-border spinner-border-sm text-danger"></div>';
+        seccionGaleria.style.display = 'block';
+
+        fetch(`obtener_galeria.php?id=${datos.id}`)
+            .then(res => res.json())
+            .then(images => {
+                contenedorGaleria.innerHTML = '';
+                if(images.length > 0) {
+                    images.forEach(img => {
+                        const div = document.createElement('div');
+                        div.className = 'gal-item';
+                        div.innerHTML = `
+                            <img src="../${img.ruta_imagen}">
+                            <button type="button" class="btn-del-photo" onclick="eliminarFotoGaleria(${img.id}, this)">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        `;
+                        contenedorGaleria.appendChild(div);
+                    });
+                } else {
+                    seccionGaleria.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                console.error("Error cargando galería", err);
+                seccionGaleria.style.display = 'none';
+            });
         
         modalMaster.show();
+    }
+
+    function eliminarFotoGaleria(fotoId, btn) {
+        Swal.fire({
+            title: '¿Eliminar imagen?',
+            text: "Se borrará solo esta foto de la galería.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d3122a',
+            confirmButtonText: 'SÍ, BORRAR'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`eliminar_foto_galeria.php?id=${fotoId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            btn.parentElement.remove();
+                            // Ocultar sección si ya no hay fotos
+                            if(document.getElementById('lista_galeria').children.length === 0) {
+                                document.getElementById('galeria_actual_container').style.display = 'none';
+                            }
+                        }
+                    });
+            }
+        });
     }
 
     function previewImg(event) {
@@ -211,11 +277,13 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    // Alerta de éxito/error
+    // Alerta de éxito/error al volver de procesar_casos.php
     const params = new URLSearchParams(window.location.search);
     if(params.get('status') === 'success') {
         Swal.fire({ icon: 'success', title: '¡Hecho!', text: 'La información se actualizó correctamente.', confirmButtonColor: '#d3122a' });
         window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('status') === 'error') {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo procesar la solicitud.', confirmButtonColor: '#d3122a' });
     }
 </script>
 </body>

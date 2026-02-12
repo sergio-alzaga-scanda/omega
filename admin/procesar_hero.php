@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $main_color = $_POST['color_primario'];
 
     $logo_sql = "";
+    $logo_sql_pie = "";
     // Procesar logo si se subió uno nuevo
     if (!empty($_FILES['logo']['name'])) {
         $ruta = "assets/logo_" . time() . "_" . $_FILES['logo']['name'];
@@ -17,6 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $logo_sql = ", logo_url = '$ruta'";
         }
     }
+    if (!empty($_FILES['logo_pie']['name'])) {
+        $ruta = "assets/logo_" . time() . "_" . $_FILES['logo']['name'];
+        if(move_uploaded_file($_FILES['logo']['tmp_name'], "../" . $ruta)) {
+            $logo_sql_pie = ", logo_url = '$ruta'";
+        }
+    }
+
 
     // Actualizar registro único
     $sql = "UPDATE hero_config SET 
@@ -25,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color_fondo = '$bg_color', 
             color_primario = '$main_color' 
             $logo_sql
+            $logo_sql_pie
             WHERE id = 1";
 
     if ($conn->query($sql)) {
