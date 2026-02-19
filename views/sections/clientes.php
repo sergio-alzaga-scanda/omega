@@ -1,6 +1,6 @@
 <?php
 // views/sections/clientes.php
-$res_clientes = $conn->query("SELECT * FROM clientes ORDER BY orden ASC LIMIT 5");
+$res_clientes = $conn->query("SELECT * FROM clientes ORDER BY orden ASC");
 $clientes = [];
 while($row = $res_clientes->fetch_assoc()) { $clientes[] = $row; }
 
@@ -73,7 +73,7 @@ $clientes_loop = array_merge($clientes, $clientes, $clientes);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.logo-box img { max-width: 165%; max-height: 165%; object-fit: contain; }
 
 /* ESTILO DE LAS FLECHAS ROJAS UNIFICADO */
 .speed-nav { 

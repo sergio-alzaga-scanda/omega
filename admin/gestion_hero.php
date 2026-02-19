@@ -9,6 +9,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 // Consultar configuración actual del Hero
+// Asegúrate de haber ejecutado: ALTER TABLE hero_config ADD COLUMN video_url VARCHAR(255) DEFAULT NULL;
 $res = $conn->query("SELECT * FROM hero_config WHERE id = 1");
 $h = $res->fetch_assoc();
 ?>
@@ -27,14 +28,15 @@ $h = $res->fetch_assoc();
         .preview-box { 
             background: <?php echo $h['color_fondo']; ?>; 
             color: white; 
-            padding: 60px 40px; 
+            padding: 40px 20px; 
             border-radius: 15px; 
             text-align: center;
-            min-height: 300px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
+            position: relative;
         }
         
         .btn-preview { 
@@ -44,11 +46,21 @@ $h = $res->fetch_assoc();
             padding: 12px 30px; 
             font-weight: bold;
             text-transform: uppercase;
+            margin-bottom: 25px;
         }
 
-        /* Ajuste para que el contenido no quede oculto tras el menú lateral */
         .main-content {
             padding: 30px;
+        }
+
+        /* Estilo para el recuadro del video en la vista previa */
+        .video-preview-container {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
@@ -79,22 +91,23 @@ $h = $res->fetch_assoc();
                                 <input type="text" name="texto_boton" class="form-control" value="<?php echo htmlspecialchars($h['texto_boton']); ?>" required>
                             </div>
 
-                            
-                                    <input type="color" hidden name="color_fondo" class="form-control form-control-color w-100" value="<?php echo $h['color_fondo']; ?>" title="Elige el color de fondo">
-                               
-                                    <input type="color" hidden name="color_primario" class="form-control form-control-color w-100" value="<?php echo $h['color_primario']; ?>" title="Elige el color del botón">
-                                
-                            
+                            <input type="color" hidden name="color_fondo" value="<?php echo $h['color_fondo']; ?>">
+                            <input type="color" hidden name="color_primario" value="<?php echo $h['color_primario']; ?>">
 
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-bold">Logo del Header</label>
                                 <input type="file" name="logo" class="form-control" accept="image/*">
-                                <div class="form-text">Formatos sugeridos: PNG transparente o SVG.</div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Logo del pie pagina</label>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Logo del pie de página</label>
                                 <input type="file" name="logo_pie" class="form-control" accept="image/*">
-                                <div class="form-text">Formatos sugeridos: PNG transparente o SVG.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-danger">Video de Presentación (Recuadro)</label>
+                                <input type="file" name="video" class="form-control" accept="video/mp4,video/webm">
+                                <div class="form-text">El video aparecerá centrado debajo del botón. Formato sugerido: MP4.</div>
                             </div>
 
                             <button type="submit" class="btn btn-danger w-100 fw-bold p-3" style="background-color: #d3122a; border: none;">
@@ -109,17 +122,30 @@ $h = $res->fetch_assoc();
                         <h5 class="text-secondary fw-bold mb-3">Vista Previa del Sitio</h5>
                         <div class="preview-box shadow-sm">
                             <?php if(!empty($h['logo_url'])): ?>
-                                <img src="../<?php echo $h['logo_url']; ?>" alt="Logo" class="mb-4" style="max-height: 50px;">
+                                <img src="../<?php echo $h['logo_url']; ?>" alt="Logo" class="mb-4" style="max-height: 40px;">
                             <?php endif; ?>
 
-                            <h1 class="display-6 fw-bold mb-4"><?php echo $h['titulo']; ?></h1>
+                            <h1 class="h4 fw-bold mb-4"><?php echo htmlspecialchars($h['titulo']); ?></h1>
+                            
                             <button class="btn-preview rounded-pill shadow-sm">
-                                <?php echo $h['texto_boton']; ?>
+                                <?php echo htmlspecialchars($h['texto_boton']); ?>
                             </button>
+
+                            <?php if(!empty($h['video_url'])): ?>
+                                <div class="video-preview-container">
+                                    <video autoplay muted loop playsinline style="width: 100%; display: block;">
+                                        <source src="../<?php echo $h['video_url']; ?>" type="video/mp4">
+                                    </video>
+                                </div>
+                            <?php else: ?>
+                                <div class=" small" style="color: #f8f9fa;">
+                                    Sin video configurado
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <p class="text-muted small mt-3 text-center">
                             <i class="bi bi-info-circle me-1"></i> 
-                            Los cambios se verán reflejados en el sitio público tras guardar.
+                            Los cambios se verán reflejados tras guardar.
                         </p>
                     </div>
                 </div>
@@ -133,7 +159,7 @@ $h = $res->fetch_assoc();
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Capturar parámetros de la URL
+    // Alertas de estado
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status');
 
@@ -141,18 +167,17 @@ document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             icon: 'success',
             title: '¡Actualización Exitosa!',
-            text: 'Los cambios en el Hero se han guardado correctamente.',
-            confirmButtonColor: '#d3122a', // Color Primacía
+            text: 'La configuración y el video se han guardado correctamente.',
+            confirmButtonColor: '#d3122a',
             timer: 3000
         }).then(() => {
-            // Limpiar la URL para que no repita la alerta al recargar
             window.history.replaceState({}, document.title, window.location.pathname);
         });
     } else if (status === 'error') {
         Swal.fire({
             icon: 'error',
             title: 'Error al actualizar',
-            text: 'Hubo un problema con la base de datos. Inténtalo de nuevo.',
+            text: 'Hubo un problema al procesar los archivos o la base de datos.',
             confirmButtonColor: '#d3122a'
         });
     }

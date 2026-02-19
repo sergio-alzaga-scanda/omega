@@ -92,6 +92,8 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
 </div>
 
 <style>
+
+
 /* Variables y Estilos Generales */
 :root {
     --brand-red: #d3122a; /* Color corporativo Primacía */
