@@ -61,6 +61,11 @@ function es_activa($archivo, $pagina_actual) {
             </a>
         </li>
         <li class="nav-item">
+            <a href="gestion_blog.php" class="nav-link <?php echo es_activa('gestion_blog.php', $pagina_actual); ?>">
+                <i class="bi bi-envelope-paper me-2"></i> Blog
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="gestion_pie.php" class="nav-link <?php echo es_activa('gestion_pie.php', $pagina_actual); ?>">
                 <i class="bi bi-envelope-paper me-2"></i> Pie de Página
             </a>

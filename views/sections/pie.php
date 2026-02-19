@@ -61,35 +61,7 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
     </div>
 </section>
 
-<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header border-0 pb-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4 p-md-5">
-                <div class="text-center mb-4">
-                    <img src="assets/logo-primacia.png" height="35" alt="Primacia" class="mb-3">
-                    <h5 class="fw-bold">GESTIÓN DEL SITIO</h5>
-                    <p class="text-muted small">Ingresa tus credenciales para continuar</p>
-                </div>
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-secondary">USUARIO / EMAIL</label>
-                        <input type="email" id="loginEmail" class="form-control bg-light border-0 p-3" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-secondary">CONTRASEÑA</label>
-                        <input type="password" id="loginPass" class="form-control bg-light border-0 p-3" required>
-                    </div>
-                    <button type="submit" class="btn w-100 p-3 fw-bold text-white shadow-sm" style="background-color: var(--brand-red); border-radius: 10px;">
-                        INICIAR SESIÓN
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <style>
 

@@ -12,6 +12,21 @@ if ($casos_res) {
     }
 }
 ?>
+<?php
+// Función para convertir links de YouTube a formato Embed compatible con iframes
+function obtenerEmbedUrl($url) {
+    if (strpos($url, 'youtube.com') !== false || strpos($url, 'youtu.be') !== false) {
+        if (strpos($url, 'youtube.com/watch') !== false) {
+            parse_str(parse_url($url, PHP_URL_QUERY), $vars);
+            $id = $vars['v'] ?? '';
+        } else {
+            $id = basename(parse_url($url, PHP_URL_PATH));
+        }
+        return "https://www.youtube.com/embed/" . $id;
+    }
+    return $url;
+}
+?>
 
 <div class="modal fade" id="modalZoomImagen" tabindex="-1" aria-hidden="true" style="z-index: 11000;">
     <div class="modal-dialog modal-fullscreen d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.9) !important;">
@@ -74,13 +89,24 @@ if ($casos_res) {
             <div class="modal-body p-0">
                 <div class="row g-0">
                     <div class="col-12 col-md-7 bg-black contenedor-visual-modal">
-                        <div id="carousel<?php echo $c['id']; ?>" class="carousel slide h-100" data-bs-ride="carousel">
+                        <div id="carousel<?php echo $c['id']; ?>" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="5000">
                             <div class="carousel-inner h-100">
+                                
+                                <?php if (!empty($c['video_url'])): ?>
                                 <div class="carousel-item active h-100">
+                                    <div class="full-frame-img">
+                                        <iframe width="100%" height="100%" src="<?php echo obtenerEmbedUrl($c['video_url']); ?>" 
+                                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <div class="carousel-item <?php echo empty($c['video_url']) ? 'active' : ''; ?> h-100">
                                     <div class="full-frame-img cursor-zoom" onclick="zoomImage('<?php echo $c['imagen_url']; ?>')">
                                         <img src="<?php echo $base_url . htmlspecialchars($c['imagen_url'] ?? ''); ?>" alt="Portada">
                                     </div>
                                 </div>
+
                                 <?php 
                                 $cid = (int)$c['id'];
                                 $gal = $conn->query("SELECT * FROM caso_galeria WHERE caso_id = $cid");
@@ -93,7 +119,8 @@ if ($casos_res) {
                                 </div>
                                 <?php endwhile; ?>
                             </div>
-                            <?php if($gal->num_rows > 0): ?>
+
+                            <?php if($gal->num_rows > 0 || !empty($c['video_url'])): ?>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#carousel<?php echo $c['id']; ?>" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
                                 <button class="carousel-control-next" type="button" data-bs-target="#carousel<?php echo $c['id']; ?>" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
                             <?php endif; ?>
@@ -121,7 +148,7 @@ if ($casos_res) {
 <?php endforeach; ?>
 
 <style>
-/* --- ESTILOS ORIGINALES DEL LISTADO (RESTAURADOS) --- */
+/* --- ESTILOS ORIGINALES DEL LISTADO --- */
 .exito-slider-section { padding: 60px 0; overflow: hidden; }
 .exito-slider-container { max-width: 1200px; margin: auto; position: relative; padding: 0 15px; }
 .exito-slider-wrapper { position: relative; }
@@ -138,7 +165,6 @@ if ($casos_res) {
 .exito-card-body { padding: 20px; }
 .text-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-/* FLECHAS ORIGINALES */
 .exito-nav-btn {
     position: absolute; top: 50%; transform: translateY(-50%);
     width: 50px; height: 50px; background: transparent; color: #d3122a;
@@ -157,20 +183,19 @@ if ($casos_res) {
     .exito-nav-btn svg { filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.8)); }
 }
 
-/* --- ESTILOS DEL MODAL (AMPLIADO Y FIJO) --- */
+/* --- ESTILOS DEL MODAL --- */
 @media (min-width: 768px) {
     .modal-height-fija { height: 80vh; min-height: 600px; }
     .contenedor-visual-modal, .info-modal-scroll { height: 80vh; min-height: 600px; }
-    .info-modal-scroll { overflow-y: auto; } /* Scroll solo en el texto */
+    .info-modal-scroll { overflow-y: auto; }
 }
 
-.full-frame-img { width: 100%; height: 100%; background: #000; display: flex; align-items: center; }
+.full-frame-img { width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .full-frame-img img { width: 100%; height: 100%; object-fit: cover; }
 
 .info-modal-scroll::-webkit-scrollbar { width: 6px; }
 .info-modal-scroll::-webkit-scrollbar-thumb { background: #d3122a; border-radius: 10px; }
 
-/* BOTÓN CERRAR PERSONALIZADO */
 .btn-close-custom {
     color: #fff; position: absolute; top: 15px; right: 15px; z-index: 1060;
     width: 40px; height: 40px; background-color: #d3122a; color: white !important;
@@ -208,6 +233,19 @@ document.addEventListener('DOMContentLoaded', () => {
     prev.addEventListener('click', () => { index--; moveSlider(); });
     window.addEventListener('resize', moveSlider);
     moveSlider();
+
+    // Detener videos de YouTube al cerrar el modal para que no se siga escuchando el audio
+    const modales = document.querySelectorAll('.modal');
+    modales.forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function () {
+            const iframe = modal.querySelector('iframe');
+            if (iframe) {
+                const src = iframe.src;
+                iframe.src = '';
+                iframe.src = src;
+            }
+        });
+    });
 });
 
 function zoomImage(url) {

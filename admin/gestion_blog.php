@@ -2,18 +2,19 @@
 session_start();
 require_once '../config/db.php';
 if (!isset($_SESSION['admin_id'])) { header("Location: ../index.php"); exit(); }
-$casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
+// Cambiamos la consulta a la tabla blog
+$blogs = $conn->query("SELECT * FROM blog ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Casos | Primacía</title>
+    <title>Gestión de Blog | Primacía</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root { --brand-red: #d3122a; }
-        .case-img-preview { width: 100px; height: 70px; object-fit: cover; border-radius: 8px; }
+        .blog-img-preview { width: 80px; height: 100px; object-fit: cover; border-radius: 8px; }
         .btn-save-lg { font-weight: 800; text-transform: uppercase; padding: 18px; font-size: 1.1rem; }
         .modal-header { background-color: #1a1a1a; color: white; border-bottom: 4px solid var(--brand-red); }
         .gal-item { position: relative; width: 100px; height: 75px; }
@@ -37,9 +38,9 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
 
         <main class="col-md-10 ms-sm-auto p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold">Gestión de Casos de Éxito</h2>
+                <h2 class="fw-bold">Gestión de Blog</h2>
                 <button class="btn btn-danger btn-lg shadow fw-bold px-4" onclick="abrirModalNuevo()">
-                    <i class="bi bi-plus-circle me-2"></i> AGREGAR PROYECTO
+                    <i class="bi bi-plus-circle me-2"></i> NUEVA ENTRADA
                 </button>
             </div>
 
@@ -48,23 +49,25 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
                     <table class="table table-hover align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>Imagen</th>
-                                <th>Proyecto</th>
-                                <th>Cliente</th>
+                                <th>Portada</th>
+                                <th>Título</th>
+                                <th>Categoría</th>
+                                <th>Fecha</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($c = $casos->fetch_assoc()): ?>
+                            <?php while($b = $blogs->fetch_assoc()): ?>
                             <tr>
-                                <td><img src="../<?php echo $c['imagen_url']; ?>" class="case-img-preview"></td>
-                                <td class="fw-bold text-uppercase"><?php echo $c['titulo']; ?></td>
-                                <td><?php echo $c['nombre_cliente']; ?></td>
+                                <td><img src="../<?php echo $b['imagen_portada']; ?>" class="blog-img-preview"></td>
+                                <td class="fw-bold text-uppercase"><?php echo $b['titulo']; ?></td>
+                                <td><span class="badge bg-secondary"><?php echo $b['categoria']; ?></span></td>
+                                <td><?php echo $b['fecha']; ?></td>
                                 <td class="text-center">
-                                    <button class="btn btn-primary btn-sm me-2" onclick='abrirModalEditar(<?php echo json_encode($c); ?>)'>
+                                    <button class="btn btn-primary btn-sm me-2" onclick='abrirModalEditar(<?php echo json_encode($b); ?>)'>
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
-                                    <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar(<?php echo $c['id']; ?>)">
+                                    <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar(<?php echo $b['id']; ?>)">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </td>
@@ -78,14 +81,14 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
     </div>
 </div>
 
-<div class="modal fade" id="modalCasosMaster" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalBlogMaster" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
-        <form action="procesar_casos.php" method="POST" enctype="multipart/form-data" class="modal-content border-0 shadow-lg" id="formCasos">
+        <form action="procesar_blog.php" method="POST" enctype="multipart/form-data" class="modal-content border-0 shadow-lg" id="formBlog">
             <input type="hidden" name="accion" id="form_accion" value="nuevo">
             <input type="hidden" name="id" id="form_id">
             
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="modal_titulo_label">REGISTRAR PROYECTO</h5>
+                <h5 class="modal-title fw-bold" id="modal_titulo_label">NUEVA ENTRADA DE BLOG</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             
@@ -93,21 +96,36 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">TÍTULO DEL PROYECTO</label>
+                            <label class="fw-bold small text-muted">TÍTULO DE LA ENTRADA</label>
                             <input type="text" name="titulo" id="in_titulo" class="form-control form-control-lg" required>
                         </div>
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">DESCRIPCIÓN CORTA</label>
-                            <textarea name="descripcion_corta" id="in_desc_c" class="form-control" rows="2" required></textarea>
+                            <label class="fw-bold small text-muted">CATEGORÍA</label>
+                            <input type="text" name="categoria" id="in_categoria" class="form-control" placeholder="Ej: Tendencias, BTL...">
                         </div>
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">DESCRIPCIÓN LARGA (DETALLE)</label>
-                            <textarea name="descripcion_larga" id="in_desc_l" class="form-control" rows="6" required></textarea>
+                            <label class="fw-bold small text-muted">RESUMEN (Texto sobre tarjeta)</label>
+                            <textarea name="resumen" id="in_resumen" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold small text-muted">CONTENIDO HTML (Detalle modal)</label>
+                            <textarea name="contenido_html" id="in_cont_html" class="form-control" rows="6" required></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold small text-muted">FECHA</label>
+                                <input type="date" name="fecha" id="in_fecha" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold small text-muted">URL VIDEO (Youtube)</label>
+                                <input type="url" name="video_url" id="in_video" class="form-control" placeholder="https://...">
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">IMAGEN PORTADA (Principal)</label>
+                            <label class="fw-bold small text-muted">IMAGEN PORTADA (Vertical recomendada)</label>
                             <input type="file" name="imagen" class="form-control" onchange="previewImg(event)">
                             <div class="mt-3 text-center bg-light p-2 border rounded">
                                 <img id="img_preview" src="#" style="max-height: 150px; display: none; border-radius: 8px;">
@@ -115,34 +133,14 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
                         </div>
 
                         <div class="mb-3">
-                            <label class="fw-bold small text-danger">AÑADIR FOTOS A LA GALERÍA</label>
+                            <label class="fw-bold small text-danger">IMÁGENES PARA CARRUSEL INTERNO</label>
                             <input type="file" name="galeria[]" id="in_galeria" class="form-control" multiple accept="image/*">
                             <div id="previsualizacion_cola" class="d-flex flex-wrap gap-2 mt-2"></div>
                         </div>
 
                         <div id="galeria_actual_container" class="mb-3" style="display:none;">
-                            <label class="fw-bold small text-muted d-block mb-2">GALERÍA ACTUAL EN SERVIDOR</label>
+                            <label class="fw-bold small text-muted d-block mb-2">GALERÍA ACTUAL</label>
                             <div id="lista_galeria" class="d-flex flex-wrap gap-3 p-2 bg-light border rounded"></div>
-                        </div>
-                        <div class="mb-3">
-    <label class="fw-bold small text-muted">URL DE VIDEO (YOUTUBE/VIMEO)</label>
-    <input type="url" name="video_url" id="in_video" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
-    <small class="text-muted">Opcional. Si se agrega, aparecerá en el detalle del caso.</small>
-</div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold small text-muted">CLIENTE</label>
-                                <input type="text" name="nombre_cliente" id="in_cliente" class="form-control">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold small text-muted">CARGO</label>
-                                <input type="text" name="cargo_cliente" id="in_cargo" class="form-control">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold small text-muted">TESTIMONIO / COMENTARIO</label>
-                            <textarea name="comentario_cliente" id="in_comentario" class="form-control" rows="2"></textarea>
                         </div>
                     </div>
                 </div>
@@ -150,7 +148,7 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
             
             <div class="modal-footer p-0">
                 <button type="submit" class="btn btn-danger btn-lg w-100 btn-save-lg shadow-none" style="border-radius: 0 0 10px 10px;">
-                    <i class="bi bi-cloud-arrow-up me-2"></i> GUARDAR EN BASE DE DATOS
+                    <i class="bi bi-cloud-arrow-up me-2"></i> GUARDAR EN BLOG
                 </button>
             </div>
         </form>
@@ -162,10 +160,9 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    const modalMaster = new bootstrap.Modal(document.getElementById('modalCasosMaster'));
-    let archivosEnCola = []; // Array global para manejar la galería nueva
+    const modalMaster = new bootstrap.Modal(document.getElementById('modalBlogMaster'));
+    let archivosEnCola = [];
 
-    // --- MANEJO DE VISTA PREVIA PORTADA ---
     function previewImg(event) {
         const reader = new FileReader();
         reader.onload = function() {
@@ -176,27 +173,18 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
     }
 
-    // --- MANEJO DE COLA DE GALERÍA NUEVA ---
     document.getElementById('in_galeria').addEventListener('change', function(e) {
         const container = document.getElementById('previsualizacion_cola');
         const files = Array.from(e.target.files);
-
         files.forEach(file => {
             const fileId = Date.now() + Math.random();
             archivosEnCola.push({ id: fileId, file: file });
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 const div = document.createElement('div');
                 div.className = 'gal-item';
                 div.setAttribute('data-queue-id', fileId);
-                div.innerHTML = `
-                    <img src="${event.target.result}">
-                    <button type="button" class="btn-del-photo" onclick="quitarDeCola('${fileId}')">
-                        <i class="bi bi-x"></i>
-                    </button>
-                    <span class="badge-new">NUEVA</span>
-                `;
+                div.innerHTML = `<img src="${event.target.result}"><button type="button" class="btn-del-photo" onclick="quitarDeCola('${fileId}')"><i class="bi bi-x"></i></button><span class="badge-new">NUEVA</span>`;
                 container.appendChild(div);
             };
             reader.readAsDataURL(file);
@@ -217,47 +205,44 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
         document.getElementById('in_galeria').files = dt.files;
     }
 
-    // --- MODALES ---
     function abrirModalNuevo() {
-        document.getElementById('formCasos').reset();
+        document.getElementById('formBlog').reset();
         archivosEnCola = [];
         document.getElementById('previsualizacion_cola').innerHTML = '';
         document.getElementById('form_accion').value = 'nuevo';
         document.getElementById('form_id').value = '';
-        document.getElementById('modal_titulo_label').innerText = 'REGISTRAR NUEVO PROYECTO';
+        document.getElementById('modal_titulo_label').innerText = 'NUEVA ENTRADA DE BLOG';
         document.getElementById('img_preview').style.display = 'none';
         document.getElementById('galeria_actual_container').style.display = 'none';
         modalMaster.show();
     }
 
     function abrirModalEditar(datos) {
-        document.getElementById('in_video').value = datos.video_url || '';
-        document.getElementById('formCasos').reset();
+        document.getElementById('formBlog').reset();
         archivosEnCola = [];
         document.getElementById('previsualizacion_cola').innerHTML = '';
-        
         document.getElementById('form_accion').value = 'editar';
         document.getElementById('form_id').value = datos.id;
-        document.getElementById('modal_titulo_label').innerText = 'EDITAR PROYECTO: ' + datos.titulo;
-        document.getElementById('in_titulo').value = datos.titulo;
-        document.getElementById('in_desc_c').value = datos.descripcion_corta;
-        document.getElementById('in_desc_l').value = datos.descripcion_larga;
-        document.getElementById('in_cliente').value = datos.nombre_cliente;
-        document.getElementById('in_cargo').value = datos.cargo_cliente;
-        document.getElementById('in_comentario').value = datos.comentario_cliente;
+        document.getElementById('modal_titulo_label').innerText = 'EDITAR ENTRADA';
         
-        const preview = document.getElementById('img_preview');
-        if(datos.imagen_url) {
-            preview.src = '../' + datos.imagen_url;
-            preview.style.display = 'inline-block';
+        document.getElementById('in_titulo').value = datos.titulo;
+        document.getElementById('in_categoria').value = datos.categoria;
+        document.getElementById('in_resumen').value = datos.resumen;
+        document.getElementById('in_cont_html').value = datos.contenido_html;
+        document.getElementById('in_fecha').value = datos.fecha;
+        document.getElementById('in_video').value = datos.video_url || '';
+        
+        if(datos.imagen_portada) {
+            document.getElementById('img_preview').src = '../' + datos.imagen_portada;
+            document.getElementById('img_preview').style.display = 'inline-block';
         }
 
         const contenedorGaleria = document.getElementById('lista_galeria');
         const seccionGaleria = document.getElementById('galeria_actual_container');
-        contenedorGaleria.innerHTML = '<div class="spinner-border spinner-border-sm text-danger"></div>';
+        contenedorGaleria.innerHTML = 'Cargando...';
         seccionGaleria.style.display = 'block';
 
-        fetch(`obtener_galeria.php?id=${datos.id}`)
+        fetch(`obtener_galeria_blog.php?id=${datos.id}`)
             .then(res => res.json())
             .then(images => {
                 contenedorGaleria.innerHTML = '';
@@ -265,55 +250,45 @@ $casos = $conn->query("SELECT * FROM casos_exito ORDER BY id DESC");
                     images.forEach(img => {
                         const div = document.createElement('div');
                         div.className = 'gal-item';
-                        div.innerHTML = `
-                            <img src="../${img.ruta_imagen}">
-                            <button type="button" class="btn-del-photo" onclick="eliminarFotoServidor(${img.id}, this)">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        `;
+                        div.innerHTML = `<img src="../${img.ruta_imagen}"><button type="button" class="btn-del-photo" onclick="eliminarFotoBlog(${img.id}, this)"><i class="bi bi-x"></i></button>`;
                         contenedorGaleria.appendChild(div);
                     });
-                } else {
-                    seccionGaleria.style.display = 'none';
-                }
+                } else { seccionGaleria.style.display = 'none'; }
             });
-        
         modalMaster.show();
     }
 
-    function eliminarFotoServidor(fotoId, btn) {
+    function eliminarFotoBlog(fotoId, btn) {
         Swal.fire({
-            title: '¿Eliminar de la base de datos?',
+            title: '¿Borrar imagen?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d3122a',
-            confirmButtonText: 'SÍ, BORRAR'
+            confirmButtonText: 'SÍ',
+            confirmButtonColor: '#d3122a'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`eliminar_foto_galeria.php?id=${fotoId}`)
+                fetch(`eliminar_foto_blog.php?id=${fotoId}`)
                     .then(res => res.json())
-                    .then(data => {
-                        if(data.success) btn.parentElement.remove();
-                    });
+                    .then(data => { if(data.success) btn.parentElement.remove(); });
             }
         });
     }
 
     function confirmarEliminar(id) {
         Swal.fire({
-            title: '¿ELIMINAR PROYECTO COMPLETO?',
+            title: '¿ELIMINAR ENTRADA?',
             icon: 'error',
             showCancelButton: true,
-            confirmButtonColor: '#d3122a',
-            confirmButtonText: 'SÍ, ELIMINAR TODO'
+            confirmButtonText: 'SÍ, BORRAR TODO',
+            confirmButtonColor: '#d3122a'
         }).then((result) => {
-            if (result.isConfirmed) window.location.href = `eliminar_caso.php?id=${id}`;
+            if (result.isConfirmed) window.location.href = `eliminar_blog.php?id=${id}`;
         });
     }
 
     const params = new URLSearchParams(window.location.search);
     if(params.get('status') === 'success') {
-        Swal.fire({ icon: 'success', title: '¡Guardado!', confirmButtonColor: '#d3122a' });
+        Swal.fire({ icon: 'success', title: '¡Actualizado!', confirmButtonColor: '#d3122a' });
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 </script>

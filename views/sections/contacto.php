@@ -1,8 +1,13 @@
-<?php $c = getSeccion($conn, 'contacto'); ?>
+<?php 
+// Recuperamos la configuración de contacto
+$c = getSeccion($conn, 'contacto'); 
+
+// --- SOLUCIÓN INTEGRADA: Consulta dinámica de servicios ---
+// Consultamos los títulos de la tabla servicios para alimentar el combo
+$servicios_db = $conn->query("SELECT titulo FROM servicios ORDER BY titulo ASC");
+?>
 
 <section class="contacto-section" id="contacto">
-   
-
     <div class="container-contacto">
         <h2 class="contact-title">Hagamos experiencias juntos.</h2>
         <h3 class="contact-subtitle">¡CONTÁCTANOS!</h3>
@@ -13,11 +18,20 @@
             </div>
             <div class="form-group-row">
                 <input type="tel" name="telefono" placeholder="Teléfono">
-                <select name="servicio">
+                
+                <select name="servicio" required>
                     <option value="" disabled selected>Tipo de Servicio</option>
-                    <option value="digital">Experiencias Digitales</option>
-                    <option value="btl">BTL Estratégico</option>
-                    <option value="eventos">Eventos Corporativos</option>
+                    <?php 
+                    if ($servicios_db && $servicios_db->num_rows > 0): 
+                        while($s = $servicios_db->fetch_assoc()): 
+                    ?>
+                        <option value="<?php echo htmlspecialchars($s['titulo']); ?>">
+                            <?php echo htmlspecialchars($s['titulo']); ?>
+                        </option>
+                    <?php 
+                        endwhile; 
+                    endif; 
+                    ?>
                 </select>
             </div>
             <div class="form-group full">
@@ -28,8 +42,6 @@
             </div>
             <button type="submit" class="btn-enviar">ENVIAR</button>
         </form>
-
-        
     </div>
 </section>
 
@@ -41,8 +53,6 @@
     overflow: hidden;
     text-align: center;
 }
-
-
 
 .container-contacto { position: relative; z-index: 5; max-width: 800px; margin: 0 auto; padding: 0 20px; }
 
@@ -62,6 +72,12 @@ input, select, textarea {
     box-sizing: border-box;
 }
 
+/* Mejora visual para el select */
+select {
+    cursor: pointer;
+    color: #555;
+}
+
 .btn-enviar {
     background: var(--brand-red);
     color: white;
@@ -77,35 +93,7 @@ input, select, textarea {
 
 .btn-enviar:hover { background: #b00e23; }
 
-.footer-info { margin-top: 60px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-.footer-logo { height: 40px; margin-bottom: 20px; }
-
-.contact-link { color: #333; text-decoration: none; font-size: 0.95rem; display: block; margin: 5px 0; }
-.contact-link .icon { color: var(--brand-red); font-weight: bold; margin-right: 8px; }
-
-.social-label { font-weight: 700; margin-top: 20px; color: #333; }
-.social-icons { display: flex; gap: 20px; margin-top: 10px; }
-
-.social-btn {
-    width: 45px;
-    height: 45px;
-    background: var(--brand-red);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    transition: transform 0.3s;
-}
-.social-btn:hover { transform: scale(1.1); }
-
-.copyright { font-size: 0.75rem; color: #888; margin-top: 50px; }
-
 @media (max-width: 600px) {
     .form-group-row { grid-template-columns: 1fr; }
-  
 }
 </style>
