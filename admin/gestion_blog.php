@@ -103,12 +103,11 @@ $blogs = $conn->query("SELECT * FROM blog ORDER BY id DESC");
                             <label class="fw-bold small text-muted">CATEGORÍA</label>
                             <input type="text" name="categoria" id="in_categoria" class="form-control" placeholder="Ej: Tendencias, BTL...">
                         </div>
+                        
+                            <textarea name="resumen" id="in_resumen" class="form-control" rows="2" hidden></textarea>
+                        
                         <div class="mb-3">
-                            <label class="fw-bold small text-muted">RESUMEN (Texto sobre tarjeta)</label>
-                            <textarea name="resumen" id="in_resumen" class="form-control" rows="2" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold small text-muted">CONTENIDO HTML (Detalle modal)</label>
+                            <label class="fw-bold small text-muted">DETALLE</label>
                             <textarea name="contenido_html" id="in_cont_html" class="form-control" rows="6" required></textarea>
                         </div>
                     </div>
