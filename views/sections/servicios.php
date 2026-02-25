@@ -1,7 +1,7 @@
 <?php
 // 1. CONFIGURACIÓN DE RUTAS Y DATOS
 $base_url = "/omega/"; 
-$servicios_res = getItems($conn, 'servicios'); // Asegúrate de que esta función exista en tu config
+$servicios_res = getItems($conn, 'servicios'); 
 $servicios_array = [];
 if ($servicios_res) { 
     while ($row = $servicios_res->fetch_assoc()) { 
@@ -16,12 +16,15 @@ if ($servicios_res) {
             <i class="bi bi-x"></i>
         </button>
         <div class="container text-center">
-            <img src="" id="imgZoomTargetServicio" class="img-fluid" style="max-height: 85vh; border-radius: 10px;">
+            <img src="" id="imgZoomTargetServicio" class="img-fluid" style="max-height: 90vh; max-width: 90vw; border-radius: 5px; object-fit: contain;">
         </div>
     </div>
 </div>
 
 <section class="servicios-section" id="servicios">
+    <img src="assets/flechas/2.png" class="deco-arrow_2 deco-top-left_2" alt="decoracion">
+    <img src="assets/flechas/4.jpg" class="deco-arrow_2 deco-bottom-right_2" alt="decoracion">
+    
     <div class="container-services">
         <h2 class="section-title">Servicios</h2>
         
@@ -31,9 +34,9 @@ if ($servicios_res) {
                 <div class="service-image">
                     <img src="<?php echo $base_url . $s['imagen_url']; ?>" alt="<?php echo htmlspecialchars($s['titulo']); ?>" loading="lazy">
                 </div>
-                <div class="service-info">
+                <div class="service-info text-start">
                     <span class="service-tags"><?php echo htmlspecialchars($s['subtitulos_rojos']); ?></span>
-                    <h4><?php echo htmlspecialchars($s['titulo']); ?></h4>
+                    <h4 style="color: white;"><?php echo htmlspecialchars($s['titulo']); ?></h4>
                     <p class="text-truncate-3"><?php echo nl2br(htmlspecialchars($s['descripcion'])); ?></p>
                     <button class="btn-ver-mas" data-bs-toggle="modal" data-bs-target="#servicioModal<?php echo (int)$s['id']; ?>">
                         VER MÁS <i class="bi bi-plus-lg"></i>
@@ -43,15 +46,12 @@ if ($servicios_res) {
             <?php endforeach; ?>
         </div>
     </div>
-    
-    <div class="shape-right"></div>
-    <div class="shape-left-bottom"></div>
 </section>
 
 <?php foreach ($servicios_array as $s): ?>
 <div class="modal fade" id="servicioModal<?php echo (int)$s['id']; ?>" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg overflow-hidden modal-grande-personalizado">
+        <div class="modal-content border-0 shadow-lg overflow-hidden modal-grande-personalizado bg-dark-custom">
             
             <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
                 <i class="bi bi-x"></i>
@@ -64,17 +64,16 @@ if ($servicios_res) {
                             <div class="carousel-inner h-100">
                                 <div class="carousel-item active h-100">
                                     <div class="img-wrapper-fijo cursor-zoom" onclick="zoomServicio('<?php echo $s['imagen_url']; ?>')">
-                                        <img src="<?php echo $base_url . $s['imagen_url']; ?>" alt="Imagen principal">
+                                        <img src="<?php echo $base_url . $s['imagen_url']; ?>" alt="Imagen principal" class="img-completa-modal">
                                     </div>
                                 </div>
-                                
                                 <?php 
                                 $sid = (int)$s['id'];
                                 $gal = $conn->query("SELECT * FROM servicio_galeria WHERE servicio_id = $sid");
                                 while($img = $gal->fetch_assoc()): ?>
                                 <div class="carousel-item h-100">
                                     <div class="img-wrapper-fijo cursor-zoom" onclick="zoomServicio('<?php echo $img['ruta_imagen']; ?>')">
-                                        <img src="<?php echo $base_url . $img['ruta_imagen']; ?>" alt="Imagen galería">
+                                        <img src="<?php echo $base_url . $img['ruta_imagen']; ?>" alt="Imagen galería" class="img-completa-modal">
                                     </div>
                                 </div>
                                 <?php endwhile; ?>
@@ -91,20 +90,20 @@ if ($servicios_res) {
                         </div>
                     </div>
 
-                    <div class="col-12 col-lg-5 p-4 p-md-5 bg-white col-info-scroll">
+                    <div class="col-12 col-lg-5 p-4 p-md-5 col-info-scroll text-start">
                         <div class="info-modal-content">
                             <span class="text-danger fw-bold small text-uppercase mb-2 d-block">
                                 <?php echo htmlspecialchars($s['subtitulos_rojos']); ?>
                             </span>
 
-                            <h2 class="fw-bold text-dark mt-2 mb-4">
+                            <h2 class="fw-bold mt-2 mb-4 modal-title-custom">
                                 <?php echo htmlspecialchars($s['titulo']); ?>
                             </h2>
 
                             <hr class="border-danger opacity-100 mb-4" style="width: 50px; border-width: 3px;">
 
                             <div class="txt-desc-larga">
-                                <p class="text-muted fs-5" style="line-height: 1.6;">
+                                <p class="text-light-gray fs-5" style="line-height: 1.6;">
                                     <?php echo nl2br(htmlspecialchars($s['descripcion_larga'] ?? '')); ?>
                                 </p>
                             </div>
@@ -118,53 +117,177 @@ if ($servicios_res) {
 <?php endforeach; ?>
 
 <style>
-/* --- ESTILOS GENERALES --- */
+/* --- ESTILOS GENERALES Y COLORES PERSONALIZADOS --- */
 :root {
     --primary-red: #d3122a;
-    --dark-bg: #0c0c0c;
-    --card-bg: #161616;
+    --dark-bg: rgba(52, 52, 52, 1); 
+    --menu-text: rgba(130, 130, 130, 1);
+    --card-bg: rgba(60, 60, 60, 1); 
+}
+
+/* --- SECCIÓN FRONT / PORTADA --- */
+.servicios-section { 
+    background-color: var(--dark-bg); 
+    padding: 80px 0; 
+    position: relative; 
+    overflow: hidden; 
+    color: var(--menu-text); 
+}
+
+/* ESTILOS PARA LAS FLECHAS DECORATIVAS */
+.deco-arrow_2 {
+    position: absolute;
+    pointer-events: none; 
+    z-index: 1; 
+    opacity: 0.9; 
+}
+
+.deco-top-left_2 {
+    top: -50px;
+    right: -50px;
+    width: 350px; 
+}
+
+.deco-bottom-right_2 {
+    bottom: -20px;
+    left: -20px;
+    width: 300px;
+    mix-blend-mode: screen; 
+}
+
+@media (max-width: 768px) {
+    .deco-arrow_2 {
+        width: 150px;
+        opacity: 0.5;
+    }
+}
+
+.container-services { max-width: 1200px; margin: 0 auto; padding: 0 20px; z-index: 5; position: relative; }
+
+.section-title { 
+    font-size: clamp(2rem, 5vw, 3.5rem); 
+    font-weight: 900; 
+    color: var(--menu-text); 
+    text-align: left; 
+    margin-bottom: 50px; 
+    text-transform: uppercase; 
+}
+
+.services-wrapper { display: flex; flex-direction: column; gap: 30px; }
+
+/* Item de servicio original de la portada */
+.service-item { 
+    display: flex; 
+    flex-direction: column; 
+    background: var(--card-bg); 
+    border-radius: 15px; 
+    overflow: hidden; 
+    border: 1px solid rgba(255,255,255,0.05); 
+    transition: all 0.4s ease; 
+}
+
+@media (min-width: 768px) { 
+    .service-item { flex-direction: row; height: 320px; } 
+    .service-image { flex: 0 0 400px; } 
+}
+
+/* Comportamiento original sin zoom forzado */
+.service-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.service-item:hover { transform: translateY(-5px); border-color: var(--primary-red); }
+
+.service-info { 
+    padding: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    flex-grow: 1; 
+    text-align: left; 
+}
+
+.service-tags{
+    color: #d3122a !important;
+}
+
+.service-info h4 { 
+    font-size: 1.8rem; 
+    font-weight: 800; 
+    margin-bottom: 15px; 
+    color: var(--menu-text); 
+}
+
+.text-truncate-3 { 
+    color: rgba(180, 180, 180, 1); 
+    margin-bottom: 20px; 
+}
+
+.btn-ver-mas { 
+    align-self: flex-start; 
+    background: transparent; 
+    border: 2px solid var(--primary-red); 
+    color: var(--primary-red); 
+    padding: 10px 25px; 
+    font-weight: 700; 
+    border-radius: 5px; 
+    transition: 0.3s; 
+}
+
+.btn-ver-mas:hover { 
+    background: var(--primary-red); 
+    color: white; 
+}
+
+/* --- ESTILOS DEL MODAL (IMAGEN COMPLETA) --- */
+.img-wrapper-fijo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000; 
+}
+
+.img-completa-modal {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important; 
 }
 
 .cursor-zoom { cursor: zoom-in; }
+.bg-dark-custom { background-color: var(--dark-bg) !important; }
+.modal-title-custom { color: var(--menu-text) !important; }
+.text-light-gray { color: rgba(180, 180, 180, 1); }
 
-/* --- ESTILOS SECCIÓN FRONT --- */
-.servicios-section { background-color: var(--dark-bg); padding: 80px 0; position: relative; overflow: hidden; color: white; }
-.container-services { max-width: 1200px; margin: 0 auto; padding: 0 20px; z-index: 5; position: relative; }
-.section-title { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: rgba(255,255,255,0.05); text-align: center; margin-bottom: 50px; text-transform: uppercase; -webkit-text-stroke: 1px rgba(255,255,255,0.1); }
-.services-wrapper { display: flex; flex-direction: column; gap: 30px; }
-
-.service-item { display: flex; flex-direction: column; background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: all 0.4s ease; }
-@media (min-width: 768px) { .service-item { flex-direction: row; height: 320px; } .service-image { flex: 0 0 400px; } }
-.service-image { width: 100%; height: 250px; }
-.service-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-.service-item:hover { transform: translateY(-5px); border-color: var(--primary-red); }
-.service-item:hover .service-image img { transform: scale(1.1); }
-.service-info { padding: 30px; display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
-.service-tags { color: var(--primary-red); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-.service-info h4 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; }
-.text-truncate-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #aaa; margin-bottom: 20px; }
-.btn-ver-mas { align-self: flex-start; background: transparent; border: 2px solid var(--primary-red); color: var(--primary-red); padding: 10px 25px; font-weight: 700; border-radius: 5px; transition: 0.3s; }
-.btn-ver-mas:hover { background: var(--primary-red); color: white; }
-
-/* --- ESTILOS DEL MODAL --- */
 @media (min-width: 992px) {
     .modal-grande-personalizado { height: 80vh; min-height: 600px; }
-    .contenedor-img-modal, .col-info-scroll { height: 80vh; min-height: 600px; }
-    .col-info-scroll { overflow-y: auto; }
+    .contenedor-img-modal { height: 80vh; min-height: 600px; }
+    .col-info-scroll { 
+        height: 80vh; 
+        min-height: 600px; 
+        overflow-y: auto; 
+        background-color: var(--dark-bg); 
+        text-align: left;
+    }
 }
-@media (max-width: 991px) { .contenedor-img-modal { height: 350px; } }
 
-.img-wrapper-fijo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #000; overflow: hidden; }
-.img-wrapper-fijo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-.img-wrapper-fijo:hover img { transform: scale(1.05); }
-
-.btn-close-custom { position: absolute; top: 20px; right: 20px; z-index: 1070; width: 45px; height: 45px; background-color: var(--primary-red); color: white !important; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-.btn-close-custom:hover { background-color: #000; transform: rotate(90deg); }
-
-.col-info-scroll::-webkit-scrollbar { width: 6px; }
-.col-info-scroll::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
-
-.carousel-item { transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; }
+.btn-close-custom { 
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    z-index: 1070; 
+    width: 45px; 
+    height: 45px; 
+    background-color: var(--primary-red); 
+    color: white !important; 
+    border: none; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.8rem; 
+    transition: 0.3s; 
+}
 </style>
 
 <script>

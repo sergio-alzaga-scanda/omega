@@ -14,11 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($conn->query($query)) {
         // Redirección exitosa con el parámetro status=success
-        header("Location: ../home.php?status=success#contacto");
+        header("Location: ../index.php?status=success#contacto");
         exit();
     } else {
         // Redirección con error
-        header("Location: ../home.php?status=error#contacto");
+        header("Location: ../index.php?status=error#contacto");
         exit();
     }
 }

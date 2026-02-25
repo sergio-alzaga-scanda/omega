@@ -1,22 +1,29 @@
 <?php 
 /**
- * ARCHIVO: views/sections/menu.php (o el nombre que uses para tu navbar)
- * Este archivo debe ser incluido en tus páginas principales.
+ * ARCHIVO: views/sections/menu.php
  */
-
 // Obtenemos la configuración dinámica desde la base de datos
-// Asegúrate de que la conexión $conn esté disponible antes de este include
 $hero = getHeroConfig($conn); 
 
-// Definimos la ruta del logo: si existe en BD lo usamos, si no, el de respaldo
+// Definimos la ruta del logo
 $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/logo.png';
 ?>
 
 <style>
     :root {
-        --bg-dark: #2d2d2d; /* Fondo fijo del navbar */
-        --brand-red: <?php echo $hero['color_primario']; ?>; /* Color dinámico de la marca */
+        --bg-dark: #2d2d2d; 
+        --brand-red: <?php echo $hero['color_primario']; ?>; 
         --transition-speed: 0.3s;
+    }
+
+    /* IMAGEN DECORATIVA SUPERIOR IZQUIERDA (1.png) */
+    .deco-top-left {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 300px; 
+        z-index: 1002; 
+        pointer-events: none;
     }
 
     .navbar {
@@ -37,17 +44,18 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
     .brand-group {
         display: flex;
         align-items: center;
+        position: relative;
+        z-index: 1003;
+        /* Mueve el logo considerablemente más a la derecha */
+        margin-left: 400px; 
     }
 
     .logo-primicia {
         height: 45px;
-        margin-left: 140px;
         transition: transform var(--transition-speed) ease;
-        z-index: 1001;
         object-fit: contain; 
     }
 
-    /* Efecto sutil al pasar el cursor sobre el logo */
     .logo-primicia:hover {
         transform: scale(1.05);
     }
@@ -57,6 +65,8 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         align-items: center;
         gap: 30px;
         transition: 0.4s ease;
+        /* Ajuste de margen derecho para los enlaces */
+        margin-right: 50px; 
     }
 
     .nav-links a {
@@ -69,28 +79,11 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         transition: color var(--transition-speed) ease;
     }
 
-    /* --- EFECTO DE COLOR AL PASAR EL CURSOR (HOVER) --- */
     .nav-links a:hover {
         color: var(--brand-red);
     }
 
-    /* Línea decorativa debajo de los links (opcional, borra si no la quieres) */
-    .nav-links a:not(.btn-blog-outline)::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -5px;
-        left: 0;
-        background-color: var(--brand-red);
-        transition: width var(--transition-speed) ease;
-    }
-
-    .nav-links a:not(.btn-blog-outline):hover::after {
-        width: 100%;
-    }
-
-    /* --- BOTÓN DE BLOG CON EFECTO DE RELLENO --- */
+    /* Botón de Blog */
     .btn-blog-outline {
         border: 1px solid var(--brand-red);
         padding: 7px 20px;
@@ -106,13 +99,13 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         box-shadow: 0 4px 15px rgba(211, 18, 42, 0.4);
     }
 
-    /* Icono hamburguesa */
+    /* Hamburguesa para móvil */
     .hamburger {
         display: none;
         cursor: pointer;
         background: none;
         border: none;
-        z-index: 1001;
+        z-index: 1005;
         padding: 10px;
     }
 
@@ -125,22 +118,47 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         transition: 0.4s;
     }
 
-    /* Animación de la hamburguesa activa */
-    .hamburger.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+    /* --- AJUSTES RESPONSIVOS --- */
 
-    /* Estilos Responsivos */
+    @media (max-width: 1400px) {
+        /* Evita que el logo choque con el menú en pantallas medianas-grandes */
+        .brand-group { margin-left: 200px; }
+        .deco-top-left { 
+            display: none; 
+        }
+    }
+    @media (max-width: 1600px) {
+        /* Evita que el logo choque con el menú en pantallas medianas-grandes */
+        .brand-group { margin-left: 200px; }
+        .deco-top-left { 
+            display: none; 
+        }
+    }
+
+    @media (max-width: 1100px) {
+        .brand-group { margin-left: 100px; }
+        .nav-links { gap: 15px; margin-right: 20px; }
+        .deco-top-left { 
+            display: none; 
+        }
+    }
+
+    @media (max-width: 992px) {
+        .brand-group { margin-left: 60px; }
+        .nav-links { margin-right: 0; }
+    }
+
     @media (max-width: 768px) {
-        .logo-primicia { 
-            margin-left: 0; 
-            height: 35px; 
+        /* Ocultamos la imagen decorativa por completo */
+        .deco-top-left { 
+            display: none; 
         }
 
-        .hamburger {
-            display: block;
-        }
-
+        .brand-group { margin-left: 0; }
+        .logo-primicia { height: 35px; }
+        .hamburger { display: block; }
+        
+        /* ... resto de tu código del menú ... */
         .nav-links {
             position: fixed;
             top: 0;
@@ -150,39 +168,13 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
             background-color: var(--bg-dark);
             flex-direction: column;
             justify-content: center;
-            gap: 40px;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-right: 0;
         }
-
-        .nav-links.active {
-            right: 0;
-        }
-
-        .nav-links a {
-            font-size: 18px;
-        }
-    }
-
-    /* Estilo de la mancha irregular del header que mencionaste antes */
-    .brand-shape-irregular {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 180px;
-        height: 320px;
-        background-color: var(--brand-red);
-        border-radius: 0 0 100% 15% / 0 0 100% 5%;
-        z-index: 0;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        pointer-events: none;
-    }
-
-    .brand-shape-irregular.hidden {
-        opacity: 0;
-        transform: translateY(-50px);
+        .nav-links.active { right: 0; }
     }
 </style>
+
+<img src="assets/flechas/1.png" class="deco-top-left" alt="decoracion">
 
 <nav class="navbar">
     <div class="brand-group">
@@ -192,9 +184,7 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
     </div>
 
     <button class="hamburger" id="hamb-btn" aria-label="Abrir menú">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </button>
 
     <div class="nav-links" id="nav-menu">
@@ -211,35 +201,18 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         const menu = document.getElementById('nav-menu');
         const links = document.querySelectorAll('.nav-links a');
 
-        // Función para abrir/cerrar el menú
-        const toggleMenu = () => {
+        btn.addEventListener('click', () => {
             btn.classList.toggle('active');
             menu.classList.toggle('active');
-            // Bloquear el scroll cuando el menú móvil está abierto
             document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
-        };
+        });
 
-        btn.addEventListener('click', toggleMenu);
-
-        // Cerrar el menú al hacer clic en cualquier enlace
         links.forEach(link => {
             link.addEventListener('click', () => {
                 btn.classList.remove('active');
                 menu.classList.remove('active');
                 document.body.style.overflow = 'auto';
             });
-        });
-
-        // Ocultar la mancha irregular al hacer scroll (opcional)
-        window.addEventListener('scroll', () => {
-            const shape = document.querySelector('.brand-shape-irregular');
-            if(shape) {
-                if (window.scrollY > 100) {
-                    shape.classList.add('hidden');
-                } else {
-                    shape.classList.remove('hidden');
-                }
-            }
         });
     });
 </script>

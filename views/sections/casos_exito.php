@@ -159,10 +159,17 @@ function obtenerEmbedUrl($url) {
 @media (max-width: 992px) { .exito-slide { flex: 0 0 calc(50% - 10px); } }
 @media (max-width: 768px) { .exito-slide { flex: 0 0 100%; } }
 
-.exito-card { background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #eee; height: 100%; }
-.exito-card-img-container { height: 250px; }
+.exito-card { background: #fff; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    cursor: pointer; 
+    border: 1px solid #eee; 
+    height: 100%; 
+    display: flex;       /* Añadido para asegurar que el contenido se distribuya bien */
+    flex-direction: column; }
+.exito-card-img-container { height: 600px; }
 .exito-card-img-container img { width: 100%; height: 100%; object-fit: cover; }
-.exito-card-body { padding: 20px; }
+.exito-card-body { padding: 20px; flex-grow: 1; }
 .text-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .exito-nav-btn {

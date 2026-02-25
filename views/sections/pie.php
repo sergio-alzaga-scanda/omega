@@ -8,9 +8,16 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
 ?>
 
 <section class="contacto-section" id="contacto">
-    <div class="footer-shape"></div>
+    <img src="assets/flechas/4.png" class="footer-deco-image" alt="decoracion">
 
     <div class="container-contacto">
+        <div class="header-contacto mb-5">
+            <h2 class="titulo-contacto">Hagamos experiencias juntos.</h2>
+            <h3 class="subtitulo-contacto">¡CONTÁCTANOS!</h3>
+        </div>
+
+        
+
         <div class="footer-info">
             <img src="<?php echo $ruta_logo_pie; ?>" alt="PRIMACIA" class="footer-logo">
             
@@ -23,13 +30,13 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
                     </span> 
                     <?php echo $c['email']; ?>
                 </a>
-                <a href="https://wa.me/<?php echo str_replace('+', '', $c['whatsapp']); ?>" target="_blank" class="contact-link">
+                <a href="https://api.whatsapp.com/send?phone=525579047845&text=Hola%20me%20interesa%20m%C3%A1s%20informaci%C3%B3n" target="_blank" class="contact-link">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
                             <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
                         </svg>
                     </span> 
-                    <?php echo $c['whatsapp']; ?>
+                    5579047845
                 </a>
             </div>
 
@@ -49,8 +56,9 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
             </div>
 
             <p class="copyright">
-                © 2026 by JuxXxii created for PRIMACÍA. Aviso de Privacidad
-            </p>
+    © 2026 by JuxXxii created for PRIMACÍA. 
+    <a href="./assets/aviso.pdf" download style="text-decoration: none; color: inherit;">Aviso de Privacidad</a>
+</p>
 
             <div class="admin-access">
                 <button type="button" class="btn-login-minimal" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -61,135 +69,107 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
     </div>
 </section>
 
-
-
 <style>
-
-
 /* Variables y Estilos Generales */
 :root {
-    --brand-red: #d3122a; /* Color corporativo Primacía */
+    --brand-red: #d3122a; 
 }
 
 .contacto-section {
     background: #fff;
-    padding: 100px 0 60px;
+    padding: 80px 0 60px;
     position: relative;
     overflow: hidden;
     text-align: center;
 }
 
-/* Forma Orgánica Roja */
-.footer-shape {
+/* Imagen decorativa 2.png */
+.footer-deco-image {
     position: absolute;
-    bottom: -50px;
-    right: -20px;
-    width: 350px;
-    height: 600px;
-    background: var(--brand-red);
-    border-radius: 100% 0 0 0;
+    top: 15%;
+    right: -50px;
+    width: 400px; /* Tamaño ajustable según necesidad visual */
+    pointer-events: none;
     z-index: 1;
+    opacity: 1;
 }
 
-.container-contacto { position: relative; z-index: 5; max-width: 800px; margin: 0 auto; padding: 0 20px; }
+.container-contacto { 
+    position: relative; 
+    z-index: 5; 
+    max-width: 650px; /* Ancho ajustado para que el formulario se vea como en la imagen */
+    margin: 0 auto; 
+    padding: 0 20px; 
+}
 
-.footer-info { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-.footer-logo { height: 45px; margin-bottom: 25px; }
+/* Estilos de Texto */
+.titulo-contacto { color: var(--brand-red); font-weight: 600; font-size: 2.1rem; margin-bottom: 0px; }
+.subtitulo-contacto { font-weight: 800; font-size: 1.4rem; color: #222; margin-bottom: 30px; }
 
-.direct-links { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.contact-link { color: #333; text-decoration: none; font-size: 0.95rem; font-weight: 500; }
-.contact-link .icon { color: var(--brand-red); margin-right: 8px; vertical-align: middle; }
+/* Estilo de Inputs del Formulario */
+.form-control-custom {
+    width: 100%;
+    background-color: #f2f2f2; /* Color gris suave de los campos en la imagen */
+    border: none;
+    border-radius: 6px;
+    padding: 12px 18px;
+    color: #555;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
 
-.social-label { font-weight: 800; margin-top: 25px; color: #222; text-transform: uppercase; font-size: 0.85rem; }
-.social-icons { display: flex; gap: 15px; margin-top: 10px; }
+.form-control-custom:focus {
+    outline: none;
+    background-color: #e9e9e9;
+}
+
+/* Botón ENVIAR */
+.btn-enviar-rojo {
+    width: 100%;
+    background-color: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.btn-enviar-rojo:hover { background-color: #b00f23; }
+
+/* Información de Marca y Footer */
+.footer-info { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 40px; }
+.footer-logo { height: 40px; margin-bottom: 15px; }
+
+.direct-links { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+.contact-link { color: #444; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+.contact-link .icon { color: var(--brand-red); margin-right: 5px; }
+
+.social-label { font-weight: 800; margin-top: 20px; color: #222; text-transform: uppercase; font-size: 0.8rem; }
+.social-icons { display: flex; gap: 12px; margin-top: 8px; }
 
 .social-btn {
-    width: 45px; height: 45px;
+    width: 40px; height: 40px;
     background: var(--brand-red);
     color: white;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    text-decoration: none; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none; transition: 0.3s;
 }
-.social-btn:hover { transform: translateY(-5px); color: #fff; }
+.social-btn:hover { transform: translateY(-3px); color: #fff; }
 
-.copyright { font-size: 0.75rem; color: #999; margin-top: 60px; margin-bottom: 5px; }
+.copyright { font-size: 0.7rem; color: #aaa; margin-top: 50px; margin-bottom: 5px; }
 
-/* Botón Login Discreto */
-.admin-access { margin-top: 10px; }
 .btn-login-minimal {
     background: none; border: none;
-    color: #e0e0e0; /* Casi invisible sobre el fondo blanco */
-    font-size: 0.6rem; font-weight: 700;
+    color: #e5e5e5;
+    font-size: 0.55rem; font-weight: 700;
     letter-spacing: 2px; cursor: pointer;
-    transition: 0.3s;
-}
-.btn-login-minimal:hover { color: var(--brand-red); }
-
-/* Estilos de Formulario en Modal */
-#loginForm .form-control:focus {
-    background-color: #fff;
-    box-shadow: 0 0 0 0.25rem rgba(211, 18, 42, 0.1);
-    border: 1px solid var(--brand-red) !important;
 }
 
-@media (max-width: 600px) {
-    .footer-shape { width: 150px; height: 300px; }
-    .titulo-rojo-seccion { font-size: 2.2rem; }
+@media (max-width: 768px) {
+    .footer-deco-image { width: 200px; right: -30px; }
+    .titulo-contacto { font-size: 1.8rem; }
 }
 </style>
-
-<script>
-// Lógica de Validación de Inicio de Sesión
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('email', document.getElementById('loginEmail').value);
-            formData.append('password', document.getElementById('loginPass').value);
-
-            try {
-                // Petición al backend
-                const response = await fetch('controllers/auth_controller.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Acceso Concedido!',
-                        text: 'Verificando credenciales en base de datos...',
-                        timer: 1500,
-                        showConfirmButton: false,
-                        iconColor: '#d3122a'
-                    }).then(() => {
-                        window.location.href = "admin/dashboard.php";
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de acceso',
-                        text: data.message,
-                        confirmButtonColor: '#d3122a'
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error del servidor',
-                    text: 'No se pudo procesar la solicitud.',
-                    confirmButtonColor: '#d3122a'
-                });
-            }
-        });
-    }
-});
-</script>

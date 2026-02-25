@@ -2,7 +2,7 @@
 require_once 'config/db.php'; 
 require_once 'models/DataModel.php'; 
 
-// Lógica para SEO (Extraída del código principal)
+// Lógica para SEO
 $section = 'blog'; 
 
 $seo_blog = [
@@ -24,21 +24,40 @@ $seo_blog = [
     <link rel="canonical" href="https://www.primacia.com.mx/blog/">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <style>
-        :root { --brand-red: #d3122a; } /* Aseguramos que la variable de color esté presente */
-        body { margin: 0; font-family: sans-serif; }
+        /* Copiamos el estilo exacto del index para consistencia */
+        body { margin: 0; font-family: sans-serif; background-color: #2d2d2d; }
+        :root { --brand-red: #d3122a; }
+        
+        /* Ajuste para que el contenido del blog no quede oculto bajo el navbar fijo */
+        .blog-container-wrapper {
+            
+            min-height: 80vh;
+        }
     </style>
 </head>
 <body>
     <h1 class="visually-hidden"><?php echo $seo_blog['h1']; ?></h1>
 
-    <?php include 'views/sections/menu.php'; // Cambiado menu.php por header.php si es el que usas en el principal ?>
+    <?php 
+    /**
+     * IMPORTANTE: En tu index incluyes 'header.php'. 
+     * Si tu navbar (menú) está dentro de 'header.php', usa ese.
+     * Si están separados, incluye ambos en el mismo orden.
+     */
+    include 'views/sections/menu.php'; 
+    ?>
     
-    <div class="py-5"> <?php include 'views/sections/blog.php'; ?>
+    <div class="blog-container-wrapper">
+        <?php include 'views/sections/blog.php'; ?>
     </div>
 
-    <?php include 'views/sections/contacto.php'; ?>
-    <?php include 'views/sections/pie.php'; ?>
+    <?php 
+    include 'views/sections/contacto.php'; 
+    include 'views/sections/pie.php'; 
+    ?>
 
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -68,7 +87,43 @@ $seo_blog = [
             </div>
         </div>
     </div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    // 1. Evitamos que el formulario recargue la página entera
+    event.preventDefault();
 
+    // 2. Obtenemos los valores de los inputs usando sus IDs
+    const emailValue = document.getElementById('loginEmail').value;
+    const passwordValue = document.getElementById('loginPass').value;
+
+    // 3. Preparamos los datos para enviarlos por POST tal como los espera PHP
+    const formData = new FormData();
+    formData.append('email', emailValue);
+    formData.append('password', passwordValue);
+
+    // 4. Hacemos la petición al controlador
+    fetch('controllers/auth_controller.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // Convertimos la respuesta de PHP a JSON
+    .then(data => {
+        if (data.success) {
+            // ¡Acceso concedido! 
+            // Aquí puedes redirigir a la página de inicio o dashboard
+            alert(data.message); // Puedes cambiar esto por un Toast o SweetAlert
+            window.location.href = './admin/dashboard.php'; // <-- ACTUALIZA ESTA RUTA
+        } else {
+            // Acceso denegado o error (Muestra el mensaje del PHP)
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la petición:', error);
+        alert('Hubo un problema al intentar conectar con el servidor.');
+    });
+});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/main.js"></script>

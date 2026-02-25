@@ -101,7 +101,43 @@ $current_seo = isset($seo[$section]) ? $seo[$section] : $seo['home'];
         </div>
     </div>
 </div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    // 1. Evitamos que el formulario recargue la página entera
+    event.preventDefault();
 
+    // 2. Obtenemos los valores de los inputs usando sus IDs
+    const emailValue = document.getElementById('loginEmail').value;
+    const passwordValue = document.getElementById('loginPass').value;
+
+    // 3. Preparamos los datos para enviarlos por POST tal como los espera PHP
+    const formData = new FormData();
+    formData.append('email', emailValue);
+    formData.append('password', passwordValue);
+
+    // 4. Hacemos la petición al controlador
+    fetch('controllers/auth_controller.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // Convertimos la respuesta de PHP a JSON
+    .then(data => {
+        if (data.success) {
+            // ¡Acceso concedido! 
+            // Aquí puedes redirigir a la página de inicio o dashboard
+            alert(data.message); // Puedes cambiar esto por un Toast o SweetAlert
+            window.location.href = './admin/dashboard.php'; // <-- ACTUALIZA ESTA RUTA
+        } else {
+            // Acceso denegado o error (Muestra el mensaje del PHP)
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la petición:', error);
+        alert('Hubo un problema al intentar conectar con el servidor.');
+    });
+});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
