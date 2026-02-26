@@ -13,7 +13,10 @@ if ($servicios_res) {
 <div class="modal fade" id="modalZoomServicio" tabindex="-1" aria-hidden="true" style="z-index: 11000;">
     <div class="modal-dialog modal-fullscreen d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.9) !important;">
         <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
-            <i class="bi bi-x"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+</svg>
         </button>
         <div class="container text-center">
             <img src="" id="imgZoomTargetServicio" class="img-fluid" style="max-height: 90vh; max-width: 90vw; border-radius: 5px; object-fit: contain;">
@@ -54,7 +57,10 @@ if ($servicios_res) {
         <div class="modal-content border-0 shadow-lg overflow-hidden modal-grande-personalizado bg-dark-custom">
             
             <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                <i class="bi bi-x"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+</svg>
             </button>
 
             <div class="modal-body p-0">
@@ -103,10 +109,21 @@ if ($servicios_res) {
                             <hr class="border-danger opacity-100 mb-4" style="width: 50px; border-width: 3px;">
 
                             <div class="txt-desc-larga">
-                                <p class="text-light-gray fs-5" style="line-height: 1.6;">
-                                    <?php echo nl2br(htmlspecialchars($s['descripcion_larga'] ?? '')); ?>
-                                </p>
-                            </div>
+    <p class="text-light-gray fs-5" style="line-height: 1.6;">
+        <?php echo nl2br(htmlspecialchars($s['descripcion_larga'] ?? '')); ?>
+    </p>
+
+    <?php 
+        $texto_whatsapp = urlencode("Hola, me interesa más información sobre el servicio: " . $s['titulo']); 
+    ?>
+    <div class="mt-4">
+        <a href="https://api.whatsapp.com/send?phone=525579047845&text=<?php echo $texto_whatsapp; ?>" 
+           target="_blank" 
+           class="btn-cotizar-ws">
+           COTIZAR <?php echo htmlspecialchars($s['titulo']); ?> <i class="bi bi-whatsapp"></i>
+        </a>
+    </div>
+</div>
                         </div>
                     </div>
                 </div> 
@@ -117,6 +134,34 @@ if ($servicios_res) {
 <?php endforeach; ?>
 
 <style>
+
+    /* Estilo para el nuevo botón de Cotizar en WhatsApp */
+.btn-cotizar-ws {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #bb2929;
+    color: white !important;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-cotizar-ws:hover {
+    background-color: #bb2929;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(211, 37, 37, 0.3);
+}
+
+/* Si prefieres que el botón sea rojo como tu marca en lugar de verde, usa este: */
+.btn-cotizar-rojo {
+    background-color: var(--primary-red);
+    /* ... mismos otros estilos ... */
+}
 /* --- ESTILOS GENERALES Y COLORES PERSONALIZADOS --- */
 :root {
     --primary-red: #d3122a;

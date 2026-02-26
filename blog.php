@@ -27,14 +27,21 @@ $seo_blog = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <style>
-        /* Copiamos el estilo exacto del index para consistencia */
-        body { margin: 0; font-family: sans-serif; background-color: #2d2d2d; }
-        :root { --brand-red: #d3122a; }
+        /* Estilos base consistentes con el index */
+        body { 
+            margin: 0; 
+            font-family: sans-serif; 
+            /* Quitamos el fondo oscuro fijo para que no interfiera con el diseño del blog */
+            background-color: #ffffff; 
+        }
+        :root { 
+            --brand-red: #d3122a; 
+        }
         
-        /* Ajuste para que el contenido del blog no quede oculto bajo el navbar fijo */
+        /* Ajuste fundamental: empuja el contenido hacia abajo para que el menú fijo no lo tape */
         .blog-container-wrapper {
-            
             min-height: 80vh;
+            padding-top: 100px; /* Ajusta estos px si ves que queda muy pegado o muy separado del menú */
         }
     </style>
 </head>
@@ -42,11 +49,7 @@ $seo_blog = [
     <h1 class="visually-hidden"><?php echo $seo_blog['h1']; ?></h1>
 
     <?php 
-    /**
-     * IMPORTANTE: En tu index incluyes 'header.php'. 
-     * Si tu navbar (menú) está dentro de 'header.php', usa ese.
-     * Si están separados, incluye ambos en el mismo orden.
-     */
+    // Llamamos exclusivamente al menú. Ya no cargamos header.php para evitar el video de fondo.
     include 'views/sections/menu.php'; 
     ?>
     
@@ -87,6 +90,7 @@ $seo_blog = [
             </div>
         </div>
     </div>
+
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     // 1. Evitamos que el formulario recargue la página entera
@@ -110,11 +114,10 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(data => {
         if (data.success) {
             // ¡Acceso concedido! 
-            // Aquí puedes redirigir a la página de inicio o dashboard
-            alert(data.message); // Puedes cambiar esto por un Toast o SweetAlert
-            window.location.href = './admin/dashboard.php'; // <-- ACTUALIZA ESTA RUTA
+            alert(data.message); 
+            window.location.href = './admin/dashboard.php'; // <-- RUTA DE DESTINO
         } else {
-            // Acceso denegado o error (Muestra el mensaje del PHP)
+            // Acceso denegado o error
             alert('Error: ' + data.message);
         }
     })
@@ -124,6 +127,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     });
 });
 </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/main.js"></script>

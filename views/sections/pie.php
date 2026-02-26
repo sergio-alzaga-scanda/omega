@@ -11,10 +11,7 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
     <img src="assets/flechas/4.png" class="footer-deco-image" alt="decoracion">
 
     <div class="container-contacto">
-        <div class="header-contacto mb-5">
-            <h2 class="titulo-contacto">Hagamos experiencias juntos.</h2>
-            <h3 class="subtitulo-contacto">¡CONTÁCTANOS!</h3>
-        </div>
+        
 
         
 
@@ -140,7 +137,7 @@ $ruta_logo_pie = !empty($hero['logo_pie']) ? $hero['logo_pie'] : 'assets/logo.pn
 
 /* Información de Marca y Footer */
 .footer-info { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 40px; }
-.footer-logo { height: 40px; margin-bottom: 15px; }
+.footer-logo { height: 80px; margin-bottom: 15px; }
 
 .direct-links { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
 .contact-link { color: #444; text-decoration: none; font-size: 0.9rem; font-weight: 500; }

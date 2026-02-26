@@ -11,17 +11,21 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
 
 <style>
     :root {
-        --bg-dark: #2d2d2d; 
+        /* AQUÍ ESTÁ LA MAGIA: Tomamos el color dinámico que tenías en el header */
+        --bg-dark: <?php echo !empty($hero['color_fondo']) ? $hero['color_fondo'] : '#2d2d2d'; ?>; 
         --brand-red: <?php echo $hero['color_primario']; ?>; 
         --transition-speed: 0.3s;
     }
 
+    /* ... AQUÍ SIGUE TODO TU CSS ANTERIOR (deco-top-left, navbar, etc) ... */
+
     /* IMAGEN DECORATIVA SUPERIOR IZQUIERDA (1.png) */
     .deco-top-left {
-        position: absolute;
+        position: absolute; /* Cambia a 'fixed' si quieres que baje al hacer scroll con el menú */
         top: 0;
         left: 0;
-        width: 300px; 
+        /* Magia aquí: mínimo 80px, ancho dinámico de 15% de la pantalla, máximo 300px */
+        width: clamp(80px, 15vw, 300px); 
         z-index: 1002; 
         pointer-events: none;
     }
@@ -46,8 +50,8 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         align-items: center;
         position: relative;
         z-index: 1003;
-        /* Mueve el logo considerablemente más a la derecha */
-        margin-left: 400px; 
+        /* El margen izquierdo también usa clamp para apartarse siempre de la imagen decorativa */
+        margin-left: clamp(90px, 18vw, 400px); 
     }
 
     .logo-primicia {
@@ -65,7 +69,6 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
         align-items: center;
         gap: 30px;
         transition: 0.4s ease;
-        /* Ajuste de margen derecho para los enlaces */
         margin-right: 50px; 
     }
 
@@ -121,44 +124,26 @@ $ruta_logo_publico = !empty($hero['logo_url']) ? $hero['logo_url'] : 'assets/log
     /* --- AJUSTES RESPONSIVOS --- */
 
     @media (max-width: 1400px) {
-        /* Evita que el logo choque con el menú en pantallas medianas-grandes */
-        .brand-group { margin-left: 200px; }
-        .deco-top-left { 
-            display: none; 
-        }
+        /* Ya no ocultamos .deco-top-left, el clamp se encarga de reducirla */
+        .brand-group { margin-left: clamp(100px, 15vw, 200px); }
     }
-    @media (max-width: 1600px) {
-        /* Evita que el logo choque con el menú en pantallas medianas-grandes */
-        .brand-group { margin-left: 200px; }
-        .deco-top-left { 
-            display: none; 
-        }
-    }
-
+    
     @media (max-width: 1100px) {
-        .brand-group { margin-left: 100px; }
         .nav-links { gap: 15px; margin-right: 20px; }
-        .deco-top-left { 
-            display: none; 
-        }
     }
 
     @media (max-width: 992px) {
-        .brand-group { margin-left: 60px; }
+        .brand-group { margin-left: 90px; } /* Ajuste fijo para tablet para librar la imagen */
         .nav-links { margin-right: 0; }
     }
 
     @media (max-width: 768px) {
-        /* Ocultamos la imagen decorativa por completo */
-        .deco-top-left { 
-            display: none; 
-        }
-
-        .brand-group { margin-left: 0; }
+        /* Eliminado el display: none de .deco-top-left */
+        
+        .brand-group { margin-left: 70px; } /* Espacio para la imagen en su tamaño mínimo (80px) */
         .logo-primicia { height: 35px; }
         .hamburger { display: block; }
         
-        /* ... resto de tu código del menú ... */
         .nav-links {
             position: fixed;
             top: 0;

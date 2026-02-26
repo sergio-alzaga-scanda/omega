@@ -31,9 +31,6 @@ if (!function_exists('obtenerEmbedUrlBlog')) {
 }
 ?>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
 <div class="modal fade" id="modalZoomBlog" tabindex="-1" aria-hidden="true" style="z-index: 13000;">
     <div class="modal-dialog modal-fullscreen d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.9) !important;">
         <button type="button" class="btn-close-custom" data-bs-dismiss="modal"><i class="bi bi-x"></i></button>
@@ -136,23 +133,34 @@ if (!function_exists('obtenerEmbedUrlBlog')) {
 
 <style>
 /* SECCIÓN GENERAL */
-.blog-section { padding: 30px 0 80px; background-color: #fff; overflow: hidden; }
-.container-blog { max-width: 1400px; margin: 0 auto; padding: 0 20px; position: relative; }
-/* Busca estas clases y reemplaza sus propiedades */
-.blog-main-title { 
-    font-size: 3.5rem; 
-    font-weight: 900; 
-    color: #e30613; 
-    margin-bottom: 5px; 
-    text-align: left; /* Cambiado de center a left */
+.blog-section { 
+    padding: 40px 0 80px; 
+    background-color: transparent; 
+    width: 100%; 
+    overflow: hidden; 
+}
+.container-blog { 
+    width: 100%; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    padding: 0 5%; 
+    position: relative; 
 }
 
+/* TÍTULOS */
+.blog-main-title { 
+    font-size: clamp(2.5rem, 5vw, 3.5rem); 
+    font-weight: 900; 
+    color: var(--brand-red, #e30613); 
+    margin-bottom: 5px; 
+    text-align: left; 
+}
 .blog-main-subtitle { 
-    text-align: left; /* Cambiado de center a left */
+    text-align: left; 
     color: #333; 
-    font-size: 1.2rem; 
+    font-size: clamp(1rem, 2vw, 1.2rem); 
     font-weight: 700; 
-    margin-bottom: 50px; 
+    margin-bottom: 40px; 
 }
 
 /* CARRUSEL */
@@ -161,35 +169,44 @@ if (!function_exists('obtenerEmbedUrlBlog')) {
 .blog-viewport:active { cursor: grabbing; }
 .blog-track { display: flex; gap: 25px; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
 
-/* TARJETAS (Ajustadas a 600px de alto) */
-.blog-card-item { flex: 0 0 calc(25% - 19px); height: 650px; cursor: pointer; transition: 0.3s; }
-@media (max-width: 1200px) { .blog-card-item { flex: 0 0 calc(33.333% - 17px); } }
-@media (max-width: 992px) { .blog-card-item { flex: 0 0 calc(50% - 13px); } }
+/* TARJETAS */
+.blog-card-item { 
+    flex: 0 0 calc(25% - 18.75px); 
+    height: 600px; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
+@media (max-width: 1200px) { .blog-card-item { flex: 0 0 calc(33.333% - 16.66px); } }
+@media (max-width: 992px) { .blog-card-item { flex: 0 0 calc(50% - 12.5px); } }
 @media (max-width: 576px) { .blog-card-item { flex: 0 0 100%; height: 500px; } }
 
-.blog-card-inner { position: relative; width: 100%; height: 100%; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-.blog-card-inner img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; pointer-events: none; }
-.blog-card-overlay { position: absolute; left: 25px; right: 25px; color: white; z-index: 2; text-shadow: 0 2px 5px rgba(0,0,0,0.8); pointer-events: none; }
+.blog-card-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.blog-card-inner img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; pointer-events: none; }
+.blog-card-item:hover .blog-card-inner img { transform: scale(1.05); }
+
+.blog-card-overlay { position: absolute; left: 25px; right: 25px; color: white; z-index: 2; text-shadow: 0 2px 10px rgba(0,0,0,0.8); pointer-events: none; }
 .overlay-top { top: 35px; } .overlay-bottom { bottom: 35px; }
-.blog-tag { color: #e30613; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
-.ver-mas-visual { border: 2px solid white; color: white; padding: 5px 15px; font-weight: 700; font-size: 0.8rem; border-radius: 5px; margin-top: 10px; display: inline-block; }
+.blog-tag { color: var(--brand-red, #e30613); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; background: rgba(255,255,255,0.9); padding: 3px 10px; border-radius: 4px;}
+.blog-card-overlay h3 { font-size: 1.4rem; font-weight: 700; margin-top: 10px; }
+.ver-mas-visual { border: 2px solid white; color: white; padding: 6px 18px; font-weight: 700; font-size: 0.8rem; border-radius: 5px; margin-top: 15px; display: inline-block; }
 
 /* NAVEGACIÓN */
-.blog-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; background: white; color: #e30613; border: 2px solid #e30613; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: 0.3s; }
-.blog-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.blog-prev { left: -10px; } .blog-next { right: -10px; }
+.blog-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; background: white; color: var(--brand-red, #e30613); border: 2px solid var(--brand-red, #e30613); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.blog-nav-btn:hover { background: var(--brand-red, #e30613); color: white; }
+.blog-nav-btn:disabled { opacity: 0; pointer-events: none; } 
+.blog-prev { left: 0px; } .blog-next { right: 0px; }
 
-/* MODAL PERSONALIZADO (Vertical) */
+/* MODAL PERSONALIZADO */
 .modal-grande-personalizado { height: 90vh; overflow-y: auto; border-radius: 15px !important; }
 .contenedor-img-modal { height: 550px; position: relative; }
-.col-info-scroll { background: #fff; }
 
 @media (max-width: 991px) {
     .modal-grande-personalizado { height: 100vh; border-radius: 0 !important; }
     .contenedor-img-modal { height: 350px; }
 }
 
-.btn-close-custom { position: absolute; top: 15px; right: 15px; z-index: 1100; width: 40px; height: 40px; background: #e30613; color: white !important; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.btn-close-custom { position: absolute; top: 15px; right: 15px; z-index: 1100; width: 40px; height: 40px; background: var(--brand-red, #e30613); color: white !important; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.3s ease; }
+.btn-close-custom:hover { transform: scale(1.1); }
 .img-wrapper-fijo { width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .img-wrapper-fijo img { max-height: 100%; max-width: 100%; object-fit: contain; }
 .cursor-zoom { cursor: zoom-in; }
@@ -199,7 +216,6 @@ if (!function_exists('obtenerEmbedUrlBlog')) {
 function abrirModalBlog(id) {
     const el = document.getElementById('modalBlog' + id);
     if (el) { 
-        // Evitamos abrir el modal si se está arrastrando
         if (!document.getElementById('blogViewport').classList.contains('is-dragging')) {
             new bootstrap.Modal(el).show(); 
         }
@@ -225,12 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let index = 0;
         let isDown = false;
         let startX;
-        let scrollLeft;
-        let dragThreshold = 0;
-
+        
         const getVisibleCards = () => {
-            const slideWidth = slides[0].offsetWidth + 25;
-            return Math.round(viewport.offsetWidth / slideWidth);
+            const slideWidth = slides[0].offsetWidth + 25; 
+            return Math.floor(viewport.offsetWidth / slideWidth) || 1; 
         };
 
         const moveBlog = () => {
@@ -240,76 +254,58 @@ document.addEventListener('DOMContentLoaded', () => {
             if (index > max) index = max;
             if (index < 0) index = 0;
             
-            track.style.transition = "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)";
             track.style.transform = `translateX(-${index * slideWidth}px)`;
             
             if(prev) prev.disabled = (index === 0);
             if(next) next.disabled = (index >= max);
         };
 
-        // EVENTOS DE MOUSE (DRAG)
+        // EVENTOS DRAG (MOUSE)
         viewport.addEventListener('mousedown', (e) => {
             isDown = true;
             startX = e.pageX;
-            dragThreshold = 0;
             viewport.classList.remove('is-dragging');
         });
 
+        window.addEventListener('mouseup', () => { isDown = false; });
         viewport.addEventListener('mouseleave', () => { isDown = false; });
-        viewport.addEventListener('mouseup', () => { isDown = false; });
 
         viewport.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            const x = e.pageX;
-            const walk = x - startX;
-            dragThreshold = Math.abs(walk);
+            const walk = e.pageX - startX;
 
-            if (dragThreshold > 10) {
-                viewport.classList.add('is-dragging');
-            }
+            if (Math.abs(walk) > 10) viewport.classList.add('is-dragging');
 
-            if (dragThreshold > 100) {
-                if (walk > 0 && index > 0) {
-                    index--;
-                    isDown = false;
-                    moveBlog();
-                } else if (walk < 0 && index < (slides.length - getVisibleCards())) {
-                    index++;
-                    isDown = false;
-                    moveBlog();
-                }
+            if (Math.abs(walk) > 100) { 
+                if (walk > 0 && index > 0) { index--; } 
+                else if (walk < 0 && index < (slides.length - getVisibleCards())) { index++; }
+                isDown = false;
+                moveBlog();
             }
         });
 
-        // EVENTOS TÁCTILES
+        // EVENTOS TOUCH (MÓVIL)
         let touchStartX = 0;
-        viewport.addEventListener('touchstart', (e) => { 
-            touchStartX = e.changedTouches[0].screenX; 
-        }, {passive: true});
-
+        viewport.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
         viewport.addEventListener('touchend', (e) => {
-            let touchEndX = e.changedTouches[0].screenX;
-            let diff = touchStartX - touchEndX;
+            let diff = touchStartX - e.changedTouches[0].screenX;
             if (Math.abs(diff) > 50) {
-                if (diff > 0 && index < (slides.length - getVisibleCards())) {
-                    index++;
-                } else if (diff < 0 && index > 0) {
-                    index--;
-                }
+                if (diff > 0 && index < (slides.length - getVisibleCards())) { index++; } 
+                else if (diff < 0 && index > 0) { index--; }
                 moveBlog();
             }
         }, {passive: true});
 
-        // BOTONES
+        // CLICS DE BOTONES
         if(next) next.addEventListener('click', () => { index++; moveBlog(); });
         if(prev) prev.addEventListener('click', () => { index--; moveBlog(); });
 
-        window.addEventListener('resize', moveBlog);
-        moveBlog();
+        window.addEventListener('resize', () => { setTimeout(moveBlog, 100); });
+        moveBlog(); 
     }
 
-    // Reset de videos al cerrar modal
+    // Limpieza de videos (Iframes) al cerrar
     document.querySelectorAll('.modal-blog-detail').forEach(m => {
         m.addEventListener('hidden.bs.modal', () => {
             const ifr = m.querySelector('iframe');
